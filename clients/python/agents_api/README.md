@@ -24,12 +24,6 @@ The Agents API Python Client is a comprehensive library for managing Sandbox and
 - Kubernetes cluster with OpenKruise installed
 - Appropriate RBAC permissions for managing Sandbox and SandboxSet resources
 
-### Install from PyPI
-
-```bash
-pip install agents-api-client
-```
-
 ### Install from source via git
 
 ```bash
@@ -185,13 +179,6 @@ print(f"Scaled to {scaled_sandboxset['spec']['replicas']} replicas")
 - **`wait_for_sandbox_condition(name, condition_type, condition_status="True", timeout=300, namespace=None)`**: Wait for sandbox condition
 - **`wait_for_sandboxset_condition(name, condition_type, condition_status="True", timeout=300, namespace=None)`**: Wait for sandboxset condition
 
-### Constants
-
-The client includes various constants for common operations:
-
-- **API Groups**: [SANDBOX_API_GROUP](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L5-L5), [SANDBOXSET_API_GROUP](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L10-L10)
-- **API Versions**: [SANDBOX_API_VERSION](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L6-L6), [SANDBOXSET_API_VERSION](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L11-L11)
-- **Condition Types**: [CONDITION_READY](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L27-L27), [CONDITION_AVAILABLE](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L28-L28), [CONDITION_PROGRESSING](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L29-L29), [CONDITION_DEGRADED](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/constants.py#L30-L30)
 
 ## Configuration
 
@@ -211,31 +198,6 @@ config = Configuration()
 config.default_timeout = 60  # seconds
 config.request_timeout = 120  # seconds
 ```
-
-
-## Exception Handling
-
-The client provides custom exception classes:
-
-- **[AgentsAPIException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L5-L9)**: Base exception class
-- **[SandboxNotFoundException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L12-L16)**: Raised when a Sandbox is not found
-- **[SandboxSetNotFoundException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L19-L23)**: Raised when a SandboxSet is not found
-- **[ValidationException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L26-L30)**: Raised when validation fails
-- **[TimeoutException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L33-L37)**: Raised when operations time out
-- **[PermissionDeniedException](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/agents_api_client/client/exceptions.py#L40-L44)**: Raised when access is denied
-
-Example:
-```python
-from agents_api_client.exceptions import SandboxNotFoundException
-
-try:
-    sandbox = sandbox_client.get_sandbox("non-existent-sandbox")
-except SandboxNotFoundException:
-    print("Sandbox not found")
-except Exception as e:
-    print(f"An error occurred: {e}")
-```
-
 
 ## Advanced Usage
 
@@ -279,14 +241,4 @@ try:
     print("Sandbox is ready!")
 except TimeoutException:
     print("Sandbox did not become ready within timeout")
-```
-
-
-## Development
-
-### Running Tests
-
-```bash
-pip install agents-api-client
-pytest
 ```
