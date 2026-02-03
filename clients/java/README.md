@@ -1,5 +1,8 @@
 # client-java
 
+## Generate
+[Guide to generate Java codes from CustomResourceDefinition](/clients/java/docs/generate-model-from-crd.md)
+
 ## Usage
 
 Add this dependency to your project's POM:

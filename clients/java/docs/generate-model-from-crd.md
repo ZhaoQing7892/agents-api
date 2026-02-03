@@ -75,6 +75,45 @@ The script will generate Java models from the following CRD files:
 
 The generated Java model classes will be placed in the current working directory with package name `io.openkruise.agents.client`.
 
+## Customizing Output Directory Configuration
+
+If you need to customize the output directory, you should modify [generate-java-model.sh](/clients/java/generate-java-model.sh) -u, -n, and -p parameters in the file:
+
+### Parameters Explanation
+- **`-u`**: Specifies the URL addresses of CRD YAML files
+    - Current URLs used:
+        - `https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxes.yaml`
+        - `https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxsets.yaml`
+- **`-n`**: Specifies the namespace name for generated models, default is `io.openkruise.agents.client`
+- **`-p`**: Specifies the Java package name, default is `io.openkruise.agents.client`
+- **`-o`**: Specifies the output directory, default is `"$(pwd)"` (current working directory)
+
+### Default Output Path
+By default, the code will be output to:
+```
+src/main/java/${package}/models
+```
+
+Where `${package}` is the package name passed via the `-p` parameter.
+
+### Customization Example
+To change the output settings, you can modify these parameters before running the script:
+```bash
+# Modify the -p parameter to change package name and output path
+docker run \
+  --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$(pwd)":"$(pwd)" \
+  --network host \
+  ${IMAGE_NAME}:${IMAGE_TAG} \
+  /generate.sh \
+  -u [YOUR_CRD_URL] \
+  -n [YOUR_NAMESPACE] \
+  -p [YOUR_PACKAGE_NAME] \
+  -o [YOUR_OUTPUT_DIR]
+```
+
+
 ## Classes and Specific Type Changes
 ```
 V1alpha1Sandbox	IoK8sApimachineryPkgApisMetaV1ObjectMetaV2 -> V1ObjectMeta
