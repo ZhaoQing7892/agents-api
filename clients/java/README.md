@@ -11,7 +11,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>io.openkruise</groupId>
     <artifactId>agents-client-java</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -36,7 +36,7 @@ At first generate the JAR by executing:
 
 Then manually install the following JARs:
 
-* target/client-java-1.0.0.jar
+* target/client-java-0.1.0.jar
 * target/lib/*.jar
 
 ## Getting Started
