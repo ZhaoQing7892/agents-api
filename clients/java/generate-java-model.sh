@@ -43,6 +43,7 @@ docker run \
   /generate.sh \
   -u https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxes.yaml \
   -u https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxsets.yaml \
+  -u https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxclaims.yaml \
   -n io.openkruise.agents.client \
   -p io.openkruise.agents.client \
   -o "$(pwd)"
