@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @ApiModel(description = "spec defines the desired state of SandboxClaim")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-02-04T05:11:00.414Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1SandboxClaimSpec {
     public static final String SERIALIZED_NAME_ANNOTATIONS = "annotations";
     @SerializedName(SERIALIZED_NAME_ANNOTATIONS)

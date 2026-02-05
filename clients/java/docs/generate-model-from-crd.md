@@ -120,9 +120,8 @@ docker run \
 ```
 V1alpha1Sandbox	IoK8sApimachineryPkgApisMetaV1ObjectMetaV2 -> V1ObjectMeta
 V1alpha1SandboxSpec	Object template -> V1PodTemplateSpec template
+V1alpha1SandboxSpec Object volumeClaimTemplates -> V1PersistentVolumeClaimList volumeClaimTemplates
 V1alpha1SandboxSet	IoK8sApimachineryPkgApisMetaV1ObjectMetaV2 -> V1ObjectMeta
 V1alpha1SandboxSetSpec	Object template -> V1PodTemplateSpec template
-V1alpha1SandboxSetSpecVolumeClaimTemplates	Object metadata -> V1ObjectMeta metadata
-V1alpha1SandboxSetSpecSpecResources	Map<String, Object> -> Map<String, Quantity>
-V1alpha1SandboxSetSpecStatus	Map<String, Object> -> Map<String, Quantity>
+V1alpha1SandboxSetSpec	Object volumeClaimTemplates -> V1PersistentVolumeClaimList volumeClaimTemplates
 ```

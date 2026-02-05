@@ -28,7 +28,7 @@ import java.util.List;
  */
 @ApiModel(description = "status defines the observed state of SandboxClaim")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-02-04T05:11:00.414Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1SandboxClaimStatus {
     public static final String SERIALIZED_NAME_CLAIM_START_TIME = "claimStartTime";
     @SerializedName(SERIALIZED_NAME_CLAIM_START_TIME)
@@ -44,7 +44,7 @@ public class V1alpha1SandboxClaimStatus {
 
     public static final String SERIALIZED_NAME_CONDITIONS = "conditions";
     @SerializedName(SERIALIZED_NAME_CONDITIONS)
-    private List<V1alpha1SandboxClaimStatusConditions> conditions = null;
+    private List<V1alpha1Conditions> conditions = null;
 
     public static final String SERIALIZED_NAME_MESSAGE = "message";
     @SerializedName(SERIALIZED_NAME_MESSAGE)
@@ -128,13 +128,13 @@ public class V1alpha1SandboxClaimStatus {
         this.completionTime = completionTime;
     }
 
-    public V1alpha1SandboxClaimStatus conditions(List<V1alpha1SandboxClaimStatusConditions> conditions) {
+    public V1alpha1SandboxClaimStatus conditions(List<V1alpha1Conditions> conditions) {
 
         this.conditions = conditions;
         return this;
     }
 
-    public V1alpha1SandboxClaimStatus addConditionsItem(V1alpha1SandboxClaimStatusConditions conditionsItem) {
+    public V1alpha1SandboxClaimStatus addConditionsItem(V1alpha1Conditions conditionsItem) {
         if (this.conditions == null) {
             this.conditions = new ArrayList<>();
         }
@@ -150,11 +150,11 @@ public class V1alpha1SandboxClaimStatus {
     @javax.annotation.Nullable
     @ApiModelProperty(value = "Conditions represent the current state of the SandboxClaim")
 
-    public List<V1alpha1SandboxClaimStatusConditions> getConditions() {
+    public List<V1alpha1Conditions> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<V1alpha1SandboxClaimStatusConditions> conditions) {
+    public void setConditions(List<V1alpha1Conditions> conditions) {
         this.conditions = conditions;
     }
 

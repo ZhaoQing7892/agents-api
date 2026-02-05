@@ -28,7 +28,7 @@ import java.util.List;
  */
 @ApiModel(description = "SandboxClaimList is a list of SandboxClaim")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-02-04T05:11:00.414Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1SandboxClaimList {
     public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
     @SerializedName(SERIALIZED_NAME_API_VERSION)

@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(description = "Sandbox is the Schema for the sandboxes API")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-01-23T10:04:45.718Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1Sandbox {
     public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
     @SerializedName(SERIALIZED_NAME_API_VERSION)

@@ -31,8 +31,8 @@ import java.time.OffsetDateTime;
  */
 @ApiModel(description = "Condition contains details for one aspect of the current state of this API Resource.")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-01-23T10:04:45.718Z[Etc/UTC]")
-public class V1alpha1SandboxSetStatusConditions {
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
+public class V1alpha1Conditions {
     public static final String SERIALIZED_NAME_LAST_TRANSITION_TIME = "lastTransitionTime";
     @SerializedName(SERIALIZED_NAME_LAST_TRANSITION_TIME)
     private OffsetDateTime lastTransitionTime;
@@ -106,7 +106,7 @@ public class V1alpha1SandboxSetStatusConditions {
     @SerializedName(SERIALIZED_NAME_TYPE)
     private String type;
 
-    public V1alpha1SandboxSetStatusConditions lastTransitionTime(OffsetDateTime lastTransitionTime) {
+    public V1alpha1Conditions lastTransitionTime(OffsetDateTime lastTransitionTime) {
 
         this.lastTransitionTime = lastTransitionTime;
         return this;
@@ -132,7 +132,7 @@ public class V1alpha1SandboxSetStatusConditions {
         this.lastTransitionTime = lastTransitionTime;
     }
 
-    public V1alpha1SandboxSetStatusConditions message(String message) {
+    public V1alpha1Conditions message(String message) {
 
         this.message = message;
         return this;
@@ -155,7 +155,7 @@ public class V1alpha1SandboxSetStatusConditions {
         this.message = message;
     }
 
-    public V1alpha1SandboxSetStatusConditions observedGeneration(Long observedGeneration) {
+    public V1alpha1Conditions observedGeneration(Long observedGeneration) {
 
         this.observedGeneration = observedGeneration;
         return this;
@@ -183,7 +183,7 @@ public class V1alpha1SandboxSetStatusConditions {
         this.observedGeneration = observedGeneration;
     }
 
-    public V1alpha1SandboxSetStatusConditions reason(String reason) {
+    public V1alpha1Conditions reason(String reason) {
 
         this.reason = reason;
         return this;
@@ -210,7 +210,7 @@ public class V1alpha1SandboxSetStatusConditions {
         this.reason = reason;
     }
 
-    public V1alpha1SandboxSetStatusConditions status(StatusEnum status) {
+    public V1alpha1Conditions status(StatusEnum status) {
 
         this.status = status;
         return this;
@@ -231,7 +231,7 @@ public class V1alpha1SandboxSetStatusConditions {
         this.status = status;
     }
 
-    public V1alpha1SandboxSetStatusConditions type(String type) {
+    public V1alpha1Conditions type(String type) {
 
         this.type = type;
         return this;
@@ -260,13 +260,14 @@ public class V1alpha1SandboxSetStatusConditions {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        V1alpha1SandboxSetStatusConditions v1alpha1SandboxSetStatusConditions = (V1alpha1SandboxSetStatusConditions)o;
-        return Objects.equals(this.lastTransitionTime, v1alpha1SandboxSetStatusConditions.lastTransitionTime) &&
-            Objects.equals(this.message, v1alpha1SandboxSetStatusConditions.message) &&
-            Objects.equals(this.observedGeneration, v1alpha1SandboxSetStatusConditions.observedGeneration) &&
-            Objects.equals(this.reason, v1alpha1SandboxSetStatusConditions.reason) &&
-            Objects.equals(this.status, v1alpha1SandboxSetStatusConditions.status) &&
-            Objects.equals(this.type, v1alpha1SandboxSetStatusConditions.type);
+        V1alpha1Conditions v1Alpha1Conditions
+            = (V1alpha1Conditions)o;
+        return Objects.equals(this.lastTransitionTime, v1Alpha1Conditions.lastTransitionTime) &&
+            Objects.equals(this.message, v1Alpha1Conditions.message) &&
+            Objects.equals(this.observedGeneration, v1Alpha1Conditions.observedGeneration) &&
+            Objects.equals(this.reason, v1Alpha1Conditions.reason) &&
+            Objects.equals(this.status, v1Alpha1Conditions.status) &&
+            Objects.equals(this.type, v1Alpha1Conditions.type);
     }
 
     @Override
@@ -277,7 +278,7 @@ public class V1alpha1SandboxSetStatusConditions {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class V1alpha1SandboxSetStatusConditions {\n");
+        sb.append("class V1alpha1SandboxClaimStatusConditions {\n");
         sb.append("    lastTransitionTime: ").append(toIndentedString(lastTransitionTime)).append("\n");
         sb.append("    message: ").append(toIndentedString(message)).append("\n");
         sb.append("    observedGeneration: ").append(toIndentedString(observedGeneration)).append("\n");
