@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.openapi.models.V1PodTemplateSpec;
+import io.kubernetes.client.openapi.models.V1PersistentVolumeClaimList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 @ApiModel(description = "spec defines the desired state of SandboxSet")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-01-23T10:04:45.718Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1SandboxSetSpec {
     public static final String SERIALIZED_NAME_PERSISTENT_CONTENTS = "persistentContents";
     @SerializedName(SERIALIZED_NAME_PERSISTENT_CONTENTS)
@@ -48,7 +49,7 @@ public class V1alpha1SandboxSetSpec {
 
     public static final String SERIALIZED_NAME_VOLUME_CLAIM_TEMPLATES = "volumeClaimTemplates";
     @SerializedName(SERIALIZED_NAME_VOLUME_CLAIM_TEMPLATES)
-    private List<V1alpha1SandboxSetSpecVolumeClaimTemplates> volumeClaimTemplates = null;
+    private V1PersistentVolumeClaimList volumeClaimTemplates;
 
     public V1alpha1SandboxSetSpec persistentContents(List<String> persistentContents) {
 
@@ -148,19 +149,9 @@ public class V1alpha1SandboxSetSpec {
         this.templateRef = templateRef;
     }
 
-    public V1alpha1SandboxSetSpec volumeClaimTemplates(
-        List<V1alpha1SandboxSetSpecVolumeClaimTemplates> volumeClaimTemplates) {
+    public V1alpha1SandboxSetSpec volumeClaimTemplates(V1PersistentVolumeClaimList volumeClaimTemplates) {
 
         this.volumeClaimTemplates = volumeClaimTemplates;
-        return this;
-    }
-
-    public V1alpha1SandboxSetSpec addVolumeClaimTemplatesItem(
-        V1alpha1SandboxSetSpecVolumeClaimTemplates volumeClaimTemplatesItem) {
-        if (this.volumeClaimTemplates == null) {
-            this.volumeClaimTemplates = new ArrayList<>();
-        }
-        this.volumeClaimTemplates.add(volumeClaimTemplatesItem);
         return this;
     }
 
@@ -172,11 +163,11 @@ public class V1alpha1SandboxSetSpec {
     @javax.annotation.Nullable
     @ApiModelProperty(value = "VolumeClaimTemplates is a list of PVC templates to create for this Sandbox.")
 
-    public List<V1alpha1SandboxSetSpecVolumeClaimTemplates> getVolumeClaimTemplates() {
+    public V1PersistentVolumeClaimList getVolumeClaimTemplates() {
         return volumeClaimTemplates;
     }
 
-    public void setVolumeClaimTemplates(List<V1alpha1SandboxSetSpecVolumeClaimTemplates> volumeClaimTemplates) {
+    public void setVolumeClaimTemplates(V1PersistentVolumeClaimList volumeClaimTemplates) {
         this.volumeClaimTemplates = volumeClaimTemplates;
     }
 

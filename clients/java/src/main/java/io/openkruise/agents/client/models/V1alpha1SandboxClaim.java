@@ -21,12 +21,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Sandbox is the Schema for the sandboxes API
+ * SandboxClaim is the Schema for the sandboxclaims API
  */
-@ApiModel(description = "Sandbox is the Schema for the sandboxes API")
+@ApiModel(description = "SandboxClaim is the Schema for the sandboxclaims API")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
     date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
-public class V1alpha1Sandbox {
+public class V1alpha1SandboxClaim {
     public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
     @SerializedName(SERIALIZED_NAME_API_VERSION)
     private String apiVersion;
@@ -41,13 +41,13 @@ public class V1alpha1Sandbox {
 
     public static final String SERIALIZED_NAME_SPEC = "spec";
     @SerializedName(SERIALIZED_NAME_SPEC)
-    private V1alpha1SandboxSpec spec;
+    private V1alpha1SandboxClaimSpec spec;
 
     public static final String SERIALIZED_NAME_STATUS = "status";
     @SerializedName(SERIALIZED_NAME_STATUS)
-    private V1alpha1SandboxStatus status;
+    private V1alpha1SandboxClaimStatus status;
 
-    public V1alpha1Sandbox apiVersion(String apiVersion) {
+    public V1alpha1SandboxClaim apiVersion(String apiVersion) {
 
         this.apiVersion = apiVersion;
         return this;
@@ -74,7 +74,7 @@ public class V1alpha1Sandbox {
         this.apiVersion = apiVersion;
     }
 
-    public V1alpha1Sandbox kind(String kind) {
+    public V1alpha1SandboxClaim kind(String kind) {
 
         this.kind = kind;
         return this;
@@ -101,7 +101,7 @@ public class V1alpha1Sandbox {
         this.kind = kind;
     }
 
-    public V1alpha1Sandbox metadata(V1ObjectMeta metadata) {
+    public V1alpha1SandboxClaim metadata(V1ObjectMeta metadata) {
 
         this.metadata = metadata;
         return this;
@@ -123,7 +123,7 @@ public class V1alpha1Sandbox {
         this.metadata = metadata;
     }
 
-    public V1alpha1Sandbox spec(V1alpha1SandboxSpec spec) {
+    public V1alpha1SandboxClaim spec(V1alpha1SandboxClaimSpec spec) {
 
         this.spec = spec;
         return this;
@@ -136,15 +136,15 @@ public class V1alpha1Sandbox {
      **/
     @ApiModelProperty(required = true, value = "")
 
-    public V1alpha1SandboxSpec getSpec() {
+    public V1alpha1SandboxClaimSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(V1alpha1SandboxSpec spec) {
+    public void setSpec(V1alpha1SandboxClaimSpec spec) {
         this.spec = spec;
     }
 
-    public V1alpha1Sandbox status(V1alpha1SandboxStatus status) {
+    public V1alpha1SandboxClaim status(V1alpha1SandboxClaimStatus status) {
 
         this.status = status;
         return this;
@@ -158,11 +158,11 @@ public class V1alpha1Sandbox {
     @javax.annotation.Nullable
     @ApiModelProperty(value = "")
 
-    public V1alpha1SandboxStatus getStatus() {
+    public V1alpha1SandboxClaimStatus getStatus() {
         return status;
     }
 
-    public void setStatus(V1alpha1SandboxStatus status) {
+    public void setStatus(V1alpha1SandboxClaimStatus status) {
         this.status = status;
     }
 
@@ -174,12 +174,12 @@ public class V1alpha1Sandbox {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        V1alpha1Sandbox v1alpha1Sandbox = (V1alpha1Sandbox)o;
-        return Objects.equals(this.apiVersion, v1alpha1Sandbox.apiVersion) &&
-            Objects.equals(this.kind, v1alpha1Sandbox.kind) &&
-            Objects.equals(this.metadata, v1alpha1Sandbox.metadata) &&
-            Objects.equals(this.spec, v1alpha1Sandbox.spec) &&
-            Objects.equals(this.status, v1alpha1Sandbox.status);
+        V1alpha1SandboxClaim v1alpha1SandboxClaim = (V1alpha1SandboxClaim)o;
+        return Objects.equals(this.apiVersion, v1alpha1SandboxClaim.apiVersion) &&
+            Objects.equals(this.kind, v1alpha1SandboxClaim.kind) &&
+            Objects.equals(this.metadata, v1alpha1SandboxClaim.metadata) &&
+            Objects.equals(this.spec, v1alpha1SandboxClaim.spec) &&
+            Objects.equals(this.status, v1alpha1SandboxClaim.status);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class V1alpha1Sandbox {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class V1alpha1Sandbox {\n");
+        sb.append("class V1alpha1SandboxClaim {\n");
         sb.append("    apiVersion: ").append(toIndentedString(apiVersion)).append("\n");
         sb.append("    kind: ").append(toIndentedString(kind)).append("\n");
         sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");

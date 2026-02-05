@@ -27,11 +27,11 @@ import java.util.List;
  */
 @ApiModel(description = "status defines the observed state of Sandbox")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-01-23T10:04:45.718Z[Etc/UTC]")
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
 public class V1alpha1SandboxStatus {
     public static final String SERIALIZED_NAME_CONDITIONS = "conditions";
     @SerializedName(SERIALIZED_NAME_CONDITIONS)
-    private List<V1alpha1SandboxSetStatusConditions> conditions = null;
+    private List<V1alpha1Conditions> conditions = null;
 
     public static final String SERIALIZED_NAME_MESSAGE = "message";
     @SerializedName(SERIALIZED_NAME_MESSAGE)
@@ -61,13 +61,13 @@ public class V1alpha1SandboxStatus {
     @SerializedName(SERIALIZED_NAME_UPDATE_REVISION)
     private String updateRevision;
 
-    public V1alpha1SandboxStatus conditions(List<V1alpha1SandboxSetStatusConditions> conditions) {
+    public V1alpha1SandboxStatus conditions(List<V1alpha1Conditions> conditions) {
 
         this.conditions = conditions;
         return this;
     }
 
-    public V1alpha1SandboxStatus addConditionsItem(V1alpha1SandboxSetStatusConditions conditionsItem) {
+    public V1alpha1SandboxStatus addConditionsItem(V1alpha1Conditions conditionsItem) {
         if (this.conditions == null) {
             this.conditions = new ArrayList<>();
         }
@@ -87,11 +87,11 @@ public class V1alpha1SandboxStatus {
             + " reflects the status of a specific aspect of the resource. The status of each condition is one of "
             + "True, False, or Unknown.")
 
-    public List<V1alpha1SandboxSetStatusConditions> getConditions() {
+    public List<V1alpha1Conditions> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<V1alpha1SandboxSetStatusConditions> conditions) {
+    public void setConditions(List<V1alpha1Conditions> conditions) {
         this.conditions = conditions;
     }
 

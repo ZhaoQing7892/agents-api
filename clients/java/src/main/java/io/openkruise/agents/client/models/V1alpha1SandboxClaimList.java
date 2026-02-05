@@ -16,20 +16,27 @@ package io.openkruise.agents.client.models;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import io.kubernetes.client.openapi.models.V1ListMeta;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * PersistentVolumeClaim is a user&#39;s request for and claim to a persistent volume
+ * SandboxClaimList is a list of SandboxClaim
  */
-@ApiModel(description = "PersistentVolumeClaim is a user's request for and claim to a persistent volume")
+@ApiModel(description = "SandboxClaimList is a list of SandboxClaim")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen",
-    date = "2026-01-23T10:04:45.718Z[Etc/UTC]")
-public class V1alpha1SandboxSetSpecVolumeClaimTemplates {
+    date = "2026-02-05T05:47:28.584Z[Etc/UTC]")
+public class V1alpha1SandboxClaimList {
     public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
     @SerializedName(SERIALIZED_NAME_API_VERSION)
     private String apiVersion;
+
+    public static final String SERIALIZED_NAME_ITEMS = "items";
+    @SerializedName(SERIALIZED_NAME_ITEMS)
+    private List<V1alpha1SandboxClaim> items = new ArrayList<>();
 
     public static final String SERIALIZED_NAME_KIND = "kind";
     @SerializedName(SERIALIZED_NAME_KIND)
@@ -37,17 +44,9 @@ public class V1alpha1SandboxSetSpecVolumeClaimTemplates {
 
     public static final String SERIALIZED_NAME_METADATA = "metadata";
     @SerializedName(SERIALIZED_NAME_METADATA)
-    private V1ObjectMeta metadata;
+    private V1ListMeta metadata = null;
 
-    public static final String SERIALIZED_NAME_SPEC = "spec";
-    @SerializedName(SERIALIZED_NAME_SPEC)
-    private V1alpha1SandboxSetSpecSpec spec;
-
-    public static final String SERIALIZED_NAME_STATUS = "status";
-    @SerializedName(SERIALIZED_NAME_STATUS)
-    private V1alpha1SandboxSetSpecStatus status;
-
-    public V1alpha1SandboxSetSpecVolumeClaimTemplates apiVersion(String apiVersion) {
+    public V1alpha1SandboxClaimList apiVersion(String apiVersion) {
 
         this.apiVersion = apiVersion;
         return this;
@@ -74,7 +73,36 @@ public class V1alpha1SandboxSetSpecVolumeClaimTemplates {
         this.apiVersion = apiVersion;
     }
 
-    public V1alpha1SandboxSetSpecVolumeClaimTemplates kind(String kind) {
+    public V1alpha1SandboxClaimList items(List<V1alpha1SandboxClaim> items) {
+
+        this.items = items;
+        return this;
+    }
+
+    public V1alpha1SandboxClaimList addItemsItem(V1alpha1SandboxClaim itemsItem) {
+        this.items.add(itemsItem);
+        return this;
+    }
+
+    /**
+     * List of sandboxclaims. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md
+     *
+     * @return items
+     **/
+    @ApiModelProperty(required = true,
+        value = "List of sandboxclaims. More info: https://git.k8s"
+            + ".io/community/contributors/devel/sig-architecture/api-conventions.md")
+
+    public List<V1alpha1SandboxClaim> getItems() {
+        return items;
+    }
+
+    public void setItems(List<V1alpha1SandboxClaim> items) {
+        this.items = items;
+    }
+
+    public V1alpha1SandboxClaimList kind(String kind) {
 
         this.kind = kind;
         return this;
@@ -101,73 +129,26 @@ public class V1alpha1SandboxSetSpecVolumeClaimTemplates {
         this.kind = kind;
     }
 
-    public V1alpha1SandboxSetSpecVolumeClaimTemplates metadata(V1ObjectMeta metadata) {
+    public V1alpha1SandboxClaimList metadata(V1ListMeta metadata) {
 
         this.metadata = metadata;
         return this;
     }
 
     /**
-     * Standard object&#39;s metadata. More info:
-     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     * Get metadata
      *
      * @return metadata
      **/
     @javax.annotation.Nullable
-    @ApiModelProperty(
-        value = "Standard object's metadata. More info: https://git.k8s"
-            + ".io/community/contributors/devel/sig-architecture/api-conventions.md#metadata")
+    @ApiModelProperty(value = "")
 
-    public V1ObjectMeta getMetadata() {
+    public V1ListMeta getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(V1ObjectMeta metadata) {
+    public void setMetadata(V1ListMeta metadata) {
         this.metadata = metadata;
-    }
-
-    public V1alpha1SandboxSetSpecVolumeClaimTemplates spec(V1alpha1SandboxSetSpecSpec spec) {
-
-        this.spec = spec;
-        return this;
-    }
-
-    /**
-     * Get spec
-     *
-     * @return spec
-     **/
-    @javax.annotation.Nullable
-    @ApiModelProperty(value = "")
-
-    public V1alpha1SandboxSetSpecSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(V1alpha1SandboxSetSpecSpec spec) {
-        this.spec = spec;
-    }
-
-    public V1alpha1SandboxSetSpecVolumeClaimTemplates status(V1alpha1SandboxSetSpecStatus status) {
-
-        this.status = status;
-        return this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return status
-     **/
-    @javax.annotation.Nullable
-    @ApiModelProperty(value = "")
-
-    public V1alpha1SandboxSetSpecStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(V1alpha1SandboxSetSpecStatus status) {
-        this.status = status;
     }
 
     @Override
@@ -178,29 +159,26 @@ public class V1alpha1SandboxSetSpecVolumeClaimTemplates {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        V1alpha1SandboxSetSpecVolumeClaimTemplates v1alpha1SandboxSetSpecVolumeClaimTemplates
-            = (V1alpha1SandboxSetSpecVolumeClaimTemplates)o;
-        return Objects.equals(this.apiVersion, v1alpha1SandboxSetSpecVolumeClaimTemplates.apiVersion) &&
-            Objects.equals(this.kind, v1alpha1SandboxSetSpecVolumeClaimTemplates.kind) &&
-            Objects.equals(this.metadata, v1alpha1SandboxSetSpecVolumeClaimTemplates.metadata) &&
-            Objects.equals(this.spec, v1alpha1SandboxSetSpecVolumeClaimTemplates.spec) &&
-            Objects.equals(this.status, v1alpha1SandboxSetSpecVolumeClaimTemplates.status);
+        V1alpha1SandboxClaimList v1alpha1SandboxClaimList = (V1alpha1SandboxClaimList)o;
+        return Objects.equals(this.apiVersion, v1alpha1SandboxClaimList.apiVersion) &&
+            Objects.equals(this.items, v1alpha1SandboxClaimList.items) &&
+            Objects.equals(this.kind, v1alpha1SandboxClaimList.kind) &&
+            Objects.equals(this.metadata, v1alpha1SandboxClaimList.metadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(apiVersion, kind, metadata, spec, status);
+        return Objects.hash(apiVersion, items, kind, metadata);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class V1alpha1SandboxSetSpecVolumeClaimTemplates {\n");
+        sb.append("class V1alpha1SandboxClaimList {\n");
         sb.append("    apiVersion: ").append(toIndentedString(apiVersion)).append("\n");
+        sb.append("    items: ").append(toIndentedString(items)).append("\n");
         sb.append("    kind: ").append(toIndentedString(kind)).append("\n");
         sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-        sb.append("    spec: ").append(toIndentedString(spec)).append("\n");
-        sb.append("    status: ").append(toIndentedString(status)).append("\n");
         sb.append("}");
         return sb.toString();
     }

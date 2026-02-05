@@ -70,6 +70,7 @@ The script will generate Java models from the following CRD files:
 
 - `agents.kruise.io_sandboxes.yaml`
 - `agents.kruise.io_sandboxsets.yaml`
+- `agents.kruise.io_sandboxclaims.yaml`
 
 ## Output Location
 
@@ -84,6 +85,7 @@ If you need to customize the output directory, you should modify [generate-java-
     - Current URLs used:
         - `https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxes.yaml`
         - `https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxsets.yaml`
+        - `https://raw.githubusercontent.com/openkruise/agents/master/config/crd/bases/agents.kruise.io_sandboxclaims.yaml`
 - **`-n`**: Specifies the namespace name for generated models, default is `io.openkruise.agents.client`
 - **`-p`**: Specifies the Java package name, default is `io.openkruise.agents.client`
 - **`-o`**: Specifies the output directory, default is `"$(pwd)"` (current working directory)
@@ -118,9 +120,8 @@ docker run \
 ```
 V1alpha1Sandbox	IoK8sApimachineryPkgApisMetaV1ObjectMetaV2 -> V1ObjectMeta
 V1alpha1SandboxSpec	Object template -> V1PodTemplateSpec template
+V1alpha1SandboxSpec Object volumeClaimTemplates -> V1PersistentVolumeClaimList volumeClaimTemplates
 V1alpha1SandboxSet	IoK8sApimachineryPkgApisMetaV1ObjectMetaV2 -> V1ObjectMeta
 V1alpha1SandboxSetSpec	Object template -> V1PodTemplateSpec template
-V1alpha1SandboxSetSpecVolumeClaimTemplates	Object metadata -> V1ObjectMeta metadata
-V1alpha1SandboxSetSpecSpecResources	Map<String, Object> -> Map<String, Quantity>
-V1alpha1SandboxSetSpecStatus	Map<String, Object> -> Map<String, Quantity>
+V1alpha1SandboxSetSpec	Object volumeClaimTemplates -> V1PersistentVolumeClaimList volumeClaimTemplates
 ```
