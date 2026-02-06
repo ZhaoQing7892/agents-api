@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openkruise_agents_client"
+version = "0.1.0"
+description = "Python client library for Agents API in OpenKruise"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "kubernetes",
+    "requests",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/openkruise/agents-api"
+"Bug Tracker" = "https://github.com/openkruise/agents-api/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agents*", "agents.models*"]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-xdist",
+]
