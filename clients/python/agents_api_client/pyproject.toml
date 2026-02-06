@@ -37,7 +37,7 @@ readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["agents_api_client*"]
+include = ["agents_api_client*", "agents_api_client.models*"]
 namespaces = false
 
 [tool.black]
