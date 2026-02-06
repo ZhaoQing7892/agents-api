@@ -16,8 +16,8 @@ class SandboxClient:
         self.api = client.CustomObjectsApi()
 
     def create_sandbox(self, sandbox: Sandbox) -> dict:
-        sandbox.apiVersion = f"{self.group}/{self.version}",
-        sandbox.kind = self.kind,
+        sandbox.apiVersion = f"{self.group}/{self.version}"
+        sandbox.kind = self.kind
         # Pydantic -> dict
         body = sandbox.model_dump(exclude_unset=True, by_alias=True)
         return self.api.create_namespaced_custom_object(
