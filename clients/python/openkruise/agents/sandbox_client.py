@@ -1,5 +1,5 @@
 from kubernetes import client, config
-from models.sandbox import Sandbox
+from . import Sandbox
 
 
 class SandboxClient:
