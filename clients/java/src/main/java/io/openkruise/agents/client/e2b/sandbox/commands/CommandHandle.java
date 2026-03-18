@@ -63,27 +63,27 @@ public class CommandHandle implements AutoCloseable {
             return createResult();
         }
 
-        synchronized (this) {
-            if (completed.get()) {
-                return createResult();
-            }
+        try {
+            while (events != null && events.hasNext()) {
+                StartResponse response = events.next();
+                processResponse(response);
 
-            try {
-                while (events != null && events.hasNext()) {
-                    StartResponse response = events.next();
-                    processResponse(response);
+                if (completed.get()) {
+                    break;
                 }
-            } catch (StatusRuntimeException e) {
-                throw RpcUtils.handleRpcException(e);
-            } catch (Exception e) {
-                throw new SandboxException("Error while waiting for command completion", e);
-            } finally {
+            }
+        } catch (StatusRuntimeException e) {
+            throw RpcUtils.handleRpcException(e);
+        } catch (Exception e) {
+            throw new SandboxException("Error while waiting for command completion", e);
+        } finally {
+            synchronized (this) {
                 completed.set(true);
                 close();
             }
-
-            return createResult();
         }
+
+        return createResult();
     }
 
     private CommandResult createResult() {
@@ -162,7 +162,7 @@ public class CommandHandle implements AutoCloseable {
 
         SendSignalRequest request = SendSignalRequest.newBuilder()
             .setProcess(ProcessSelector.newBuilder().setPid((int)pid).build())
-            .setSignal(Signal.SIGNAL_SIGKILL)
+            .setSignal(signal)
             .build();
 
         try {
@@ -181,8 +181,6 @@ public class CommandHandle implements AutoCloseable {
 
     @Override
     public void close() {
-        if (closed.compareAndSet(false, true)) {
-            completed.set(true);
-        }
+        closed.compareAndSet(false, true);
     }
 }

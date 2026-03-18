@@ -28,6 +28,10 @@ public class RpcUtils {
             metadata.put(tokenHeader, envdAccessToken);
         }
 
+        // 添加 Authorization
+        Metadata.Key<String> authorizationHeader = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+        metadata.put(authorizationHeader, "Basic cm9vdDo=");
+
         return metadata;
     }
 
