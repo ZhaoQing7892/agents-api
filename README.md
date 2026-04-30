@@ -34,7 +34,7 @@ go get github.com/openkruise/agents-api@latest
 To get a specific version, use go1.11+ and fetch the desired version using the `go get` command. For example:
 
 ```
-go get github.com/openkruise/agents-api@v0.1.0
+go get github.com/openkruise/agents-api@v0.2.0
 ```
 
 ### How to use it
