@@ -3,7 +3,7 @@ module github.com/openkruise/agents-api/examples
 go 1.25.0
 
 require (
-	github.com/openkruise/agents-api v0.1.0
+	github.com/openkruise/agents-api v0.2.0
 	k8s.io/apimachinery v0.35.3
 	k8s.io/client-go v0.35.3
 )

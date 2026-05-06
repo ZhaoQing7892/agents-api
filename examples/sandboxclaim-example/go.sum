@@ -55,8 +55,8 @@ github.com/onsi/ginkgo/v2 v2.27.2 h1:LzwLj0b89qtIy6SSASkzlNvX6WktqurSHwkk2ipF/Ns
 github.com/onsi/ginkgo/v2 v2.27.2/go.mod h1:ArE1D/XhNXBXCBkKOLkbsb2c81dQHCRcF5zwn/ykDRo=
 github.com/onsi/gomega v1.38.2 h1:eZCjf2xjZAqe+LeWvKb5weQ+NcPwX84kqJ0cZNxok2A=
 github.com/onsi/gomega v1.38.2/go.mod h1:W2MJcYxRGV63b418Ai34Ud0hEdTVXq9NW9+Sx6uXf3k=
-github.com/openkruise/agents-api v0.1.0 h1:LrCFzmqgjNrYk7gi03sSDdCR3ph2idrXjHg3Slrio2k=
-github.com/openkruise/agents-api v0.1.0/go.mod h1:l7AoGtcsYh9osGxMLcUy+iKUdcdFsEvDS3iDD2ukknI=
+github.com/openkruise/agents-api v0.2.0 h1:e9GIW3twiv6yLee5vmhC8batS+zqyTqnq7fUjRk5CAI=
+github.com/openkruise/agents-api v0.2.0/go.mod h1:l7AoGtcsYh9osGxMLcUy+iKUdcdFsEvDS3iDD2ukknI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
