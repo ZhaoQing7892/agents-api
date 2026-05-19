@@ -48,8 +48,8 @@ func (c *FakeAgentsV1alpha1) SandboxTemplates(namespace string) v1alpha1.Sandbox
 	return newFakeSandboxTemplates(c, namespace)
 }
 
-func (c *FakeAgentsV1alpha1) SandboxUpdateOpses(namespace string) v1alpha1.SandboxUpdateOpsInterface {
-	return newFakeSandboxUpdateOpses(c, namespace)
+func (c *FakeAgentsV1alpha1) Sandboxupdateops(namespace string) v1alpha1.SandboxUpdateOpsInterface {
+	return newFakeSandboxupdateops(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate
