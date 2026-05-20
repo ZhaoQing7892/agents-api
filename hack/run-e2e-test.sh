@@ -77,7 +77,7 @@ run_java_test() {
   echo ""
   echo "=== Running Java v2 SDK E2E Test ==="
   cd "${PROJECT_ROOT}/clients/java"
-  mvn test -Dtest="io.openkruise.agents.client.e2e.v2.SdkTest" -q
+  mvn test -Dtest="io.openkruise.agents.client.e2e.v2.*Test" -q
   echo "Java v2 SDK E2E Test PASSED"
 }
 
