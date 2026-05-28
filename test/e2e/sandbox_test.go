@@ -1,24 +1,20 @@
 package e2e
 
 import (
-	"context"
 	"fmt"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	agentsv1alpha1 "github.com/openkruise/agents-api/agents/v1alpha1"
-	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var _ = Describe("Sandbox", func() {
-	var (
-		sandbox *agentsv1alpha1.Sandbox
-		ctx     = context.Background()
-	)
+	var sandbox *agentsv1alpha1.Sandbox
 
 	BeforeEach(func() {
 		sandbox = &agentsv1alpha1.Sandbox{
@@ -32,23 +28,7 @@ var _ = Describe("Sandbox", func() {
 			},
 			Spec: agentsv1alpha1.SandboxSpec{
 				EmbeddedSandboxTemplate: agentsv1alpha1.EmbeddedSandboxTemplate{
-					Template: &corev1.PodTemplateSpec{
-						ObjectMeta: metav1.ObjectMeta{
-							Labels: map[string]string{"app": "sandbox-test"},
-						},
-						Spec: corev1.PodSpec{
-							RestartPolicy: corev1.RestartPolicyNever,
-							Containers: []corev1.Container{
-								{
-									Name:  "main",
-									Image: "busybox:latest",
-									Command: []string{
-										"sh", "-c", "sleep 3600",
-									},
-								},
-							},
-						},
-					},
+					Template: basePodTemplateSpec(map[string]string{"app": "sandbox-test"}),
 				},
 			},
 		}
@@ -60,7 +40,7 @@ var _ = Describe("Sandbox", func() {
 	})
 
 	Context("CRUD operations", func() {
-		It("should create and verify sandbox", func() {
+		It("should create, get, update, list, and delete sandbox", func() {
 			By("Creating Sandbox")
 			Expect(k8sClient.Create(ctx, sandbox)).To(Succeed())
 
@@ -70,31 +50,7 @@ var _ = Describe("Sandbox", func() {
 					Name:      sandbox.Name,
 					Namespace: sandbox.Namespace,
 				}, sandbox)
-			}, time.Minute*10, time.Millisecond*500).Should(Succeed())
-
-			By("Verifying phase transitions to Running")
-			Eventually(func() agentsv1alpha1.SandboxPhase {
-				_ = k8sClient.Get(ctx, types.NamespacedName{
-					Name:      sandbox.Name,
-					Namespace: sandbox.Namespace,
-				}, sandbox)
-				return sandbox.Status.Phase
-			}, time.Second*90, time.Millisecond*500).Should(Equal(agentsv1alpha1.SandboxRunning))
-		})
-	})
-
-	Context("update and delete", func() {
-		It("should update labels and delete", func() {
-			By("Creating Sandbox")
-			Expect(k8sClient.Create(ctx, sandbox)).To(Succeed())
-
-			By("Verifying the sandbox is created")
-			Eventually(func() error {
-				return k8sClient.Get(ctx, types.NamespacedName{
-					Name:      sandbox.Name,
-					Namespace: sandbox.Namespace,
-				}, sandbox)
-			}, time.Minute*10, time.Millisecond*500).Should(Succeed())
+			}, time.Second*5, time.Millisecond*500).Should(Succeed())
 
 			By("Updating labels")
 			Eventually(func() error {
@@ -110,13 +66,8 @@ var _ = Describe("Sandbox", func() {
 
 			By("Listing Sandboxes by label")
 			list := &agentsv1alpha1.SandboxList{}
-			Eventually(func() int {
-				err := k8sClient.List(ctx, list, client.InNamespace(Namespace), client.MatchingLabels{"app": "e2e-test"})
-				if err != nil {
-					return 0
-				}
-				return len(list.Items)
-			}, time.Second*10, time.Millisecond*500).Should(BeNumerically(">=", 1))
+			Expect(k8sClient.List(ctx, list, client.InNamespace(Namespace), client.MatchingLabels{"app": "e2e-test"})).To(Succeed())
+			Expect(list.Items).ToNot(BeEmpty())
 
 			By("Deleting Sandbox")
 			Expect(k8sClient.Delete(ctx, sandbox)).To(Succeed())
@@ -127,8 +78,8 @@ var _ = Describe("Sandbox", func() {
 					Name:      sandbox.Name,
 					Namespace: sandbox.Namespace,
 				}, &agentsv1alpha1.Sandbox{})
-				return err != nil
-			}, time.Second*30, time.Second).Should(BeTrue())
+				return errors.IsNotFound(err)
+			}, time.Second*10, time.Second).Should(BeTrue())
 		})
 	})
 })

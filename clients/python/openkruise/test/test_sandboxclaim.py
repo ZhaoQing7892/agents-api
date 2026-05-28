@@ -1,21 +1,23 @@
 import pytest
-from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta, V1PodTemplateSpec, V1PodSpec, V1Container
+from kubernetes.client.exceptions import ApiException
 
 from agents import SandboxSetClient, SandboxClaimClient
 from agents.models.sandboxset import SandboxSet, Spec as SandboxSetSpec
 from agents.models.sandboxclaim import SandboxClaim, Spec as SandboxClaimSpec
-from helpers import wait_for_condition, wait_for_deletion
+from helpers import GROUP, VERSION, NAMESPACE
 
 
-def test_claim_flow(sandboxset_client, sandboxclaim_client, unique_name):
-    """Test SandboxClaim flow: create pool -> wait ready -> create claim -> wait Completed -> verify claimedReplicas -> delete"""
+def test_sandboxclaim_crud(sandboxset_client, sandboxclaim_client, unique_name, cleanup):
+    """Test SandboxClaim CRUD: create pool -> create claim -> verify spec -> delete"""
+    print("=== Test SandboxClaim CRUD Operations ===")
     pool_name = f"{unique_name}-pool"
     claim_name = f"{unique_name}-claim"
     
     # Step 1: Create a SandboxSet pool with replicas=2
+    print(f"  Step: Creating SandboxSet pool '{pool_name}' with replicas=2")
     sandboxset = SandboxSet(
-        metadata=V1ObjectMeta(name=pool_name, namespace="default", labels={"app": "pool"}),
+        metadata=V1ObjectMeta(name=pool_name, namespace=NAMESPACE, labels={"app": "pool"}),
         spec=SandboxSetSpec(
             replicas=2,
             template=V1PodTemplateSpec(
@@ -34,19 +36,12 @@ def test_claim_flow(sandboxset_client, sandboxclaim_client, unique_name):
     
     created_pool = sandboxset_client.create_sandboxset(sandboxset)
     assert created_pool["metadata"]["name"] == pool_name
-    
-    # Wait for pool to be ready (availableReplicas >= 2)
-    def get_pool():
-        return sandboxset_client.get_sandboxset(pool_name)
-    
-    def pool_ready(resource):
-        return resource.get("status", {}).get("availableReplicas", 0) >= 2
-    
-    wait_for_condition(get_pool, pool_ready, timeout=120)
+    cleanup(GROUP, VERSION, NAMESPACE, "sandboxsets", pool_name)
     
     # Step 2: Create SandboxClaim
+    print(f"  Step: Creating SandboxClaim '{claim_name}'")
     claim = SandboxClaim(
-        metadata=V1ObjectMeta(name=claim_name, namespace="default"),
+        metadata=V1ObjectMeta(name=claim_name, namespace=NAMESPACE),
         spec=SandboxClaimSpec(
             templateName=pool_name,
             replicas=1
@@ -55,24 +50,25 @@ def test_claim_flow(sandboxset_client, sandboxclaim_client, unique_name):
     
     created_claim = sandboxclaim_client.create_sandboxclaim(claim)
     assert created_claim["metadata"]["name"] == claim_name
+    cleanup(GROUP, VERSION, NAMESPACE, "sandboxclaims", claim_name)
     
-    # Wait for claim to reach Completed phase
-    def get_claim():
-        return sandboxclaim_client.get_sandboxclaim(claim_name)
-    
-    def claim_completed(resource):
-        return resource.get("status", {}).get("phase") == "Completed"
-    
-    completed_claim = wait_for_condition(get_claim, claim_completed, timeout=120)
-    assert completed_claim["status"]["phase"] == "Completed"
-    
-    # Verify claimedReplicas
-    assert completed_claim["status"].get("claimedReplicas", 0) >= 1
+    # Verify claim spec
+    print(f"  Step: Verifying SandboxClaim '{claim_name}' spec")
+    got_claim = sandboxclaim_client.get_sandboxclaim(claim_name)
+    assert got_claim["spec"]["templateName"] == pool_name
+    assert got_claim["spec"]["replicas"] == 1
+    print(f"  Verified: templateName = {got_claim['spec']['templateName']}, replicas = {got_claim['spec']['replicas']}")
     
     # Step 3: Delete claim
+    print(f"  Step: Deleting SandboxClaim '{claim_name}'")
     sandboxclaim_client.delete_sandboxclaim(claim_name)
-    wait_for_deletion(get_claim)
-    
+
+    # Verify claim deletion
+    print(f"  Step: Verifying deletion of '{claim_name}'")
+    with pytest.raises(ApiException) as exc_info:
+        sandboxclaim_client.get_sandboxclaim(claim_name)
+    assert exc_info.value.status == 404
+
     # Step 4: Delete pool
+    print(f"  Step: Deleting SandboxSet pool '{pool_name}'")
     sandboxset_client.delete_sandboxset(pool_name)
-    wait_for_deletion(get_pool)

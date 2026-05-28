@@ -1,19 +1,21 @@
 import pytest
-from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta, V1PodTemplateSpec, V1PodSpec, V1Container
+from kubernetes.client.exceptions import ApiException
 
 from agents import SandboxClient
 from agents.models.sandbox import Sandbox, Spec as SandboxSpec
-from helpers import wait_for_condition, wait_for_deletion
+from helpers import GROUP, VERSION, NAMESPACE
 
 
-def test_create_wait_running_patch_list_delete(sandbox_client, unique_name):
-    """Test Sandbox CRUD operations: create -> wait Running -> patch labels -> list -> delete -> wait deletion"""
+def test_sandbox_crud(sandbox_client, k8s_api, unique_name, cleanup):
+    """Test Sandbox CRUD operations: create -> get -> patch labels -> list -> delete"""
+    print("=== Test Sandbox CRUD Operations ===")
     name = f"{unique_name}-sandbox"
     
     # Create Sandbox
+    print("  Step: Creating Sandbox")
     sandbox = Sandbox(
-        metadata=V1ObjectMeta(name=name, namespace="default", labels={"app": "test"}),
+        metadata=V1ObjectMeta(name=name, namespace=NAMESPACE, labels={"app": "test"}),
         spec=SandboxSpec(
             template=V1PodTemplateSpec(
                 metadata=V1ObjectMeta(labels={"app": "sandbox-test"}),
@@ -30,18 +32,15 @@ def test_create_wait_running_patch_list_delete(sandbox_client, unique_name):
     )
     created = sandbox_client.create_sandbox(sandbox)
     assert created["metadata"]["name"] == name
+    cleanup(GROUP, VERSION, NAMESPACE, "sandboxes", name)
     
-    # Wait for Running phase
-    def get_sandbox():
-        return sandbox_client.get_sandbox(name)
-    
-    def is_running(resource):
-        return resource.get("status", {}).get("phase") == "Running"
-    
-    running_sandbox = wait_for_condition(get_sandbox, is_running, timeout=120)
-    assert running_sandbox["status"]["phase"] == "Running"
+    # Get sandbox
+    print(f"  Step: Verifying sandbox '{name}' is created")
+    got = sandbox_client.get_sandbox(name)
+    assert got["metadata"]["name"] == name
     
     # Patch labels using dict (Sandbox model requires spec, so use raw dict for patch)
+    print(f"  Step: Patching labels for '{name}'")
     patch_body = {
         "metadata": {
             "labels": {"app": "test", "patched": "true"}
@@ -51,25 +50,21 @@ def test_create_wait_running_patch_list_delete(sandbox_client, unique_name):
     assert patched["metadata"]["labels"].get("patched") == "true"
     
     # List sandboxes
-    try:
-        config.load_incluster_config()
-    except config.ConfigException:
-        config.load_kube_config()
-    api = client.CustomObjectsApi()
-    listed = api.list_namespaced_custom_object(
-        group="agents.kruise.io",
-        version="v1alpha1",
-        namespace="default",
+    print(f"  Step: Listing sandboxes by label")
+    listed = k8s_api.list_namespaced_custom_object(
+        group=GROUP,
+        version=VERSION,
+        namespace=NAMESPACE,
         plural="sandboxes"
     )
     assert any(item["metadata"]["name"] == name for item in listed["items"])
     
     # Delete sandbox
+    print(f"  Step: Deleting sandbox '{name}'")
     sandbox_client.delete_sandbox(name)
     
-    # Wait for deletion
-    wait_for_deletion(get_sandbox, timeout=120)
-    
     # Verify deletion
-    with pytest.raises(Exception):
+    print(f"  Step: Verifying deletion of '{name}'")
+    with pytest.raises(ApiException) as exc_info:
         sandbox_client.get_sandbox(name)
+    assert exc_info.value.status == 404

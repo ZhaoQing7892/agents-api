@@ -21,7 +21,7 @@ var _ = Describe("Checkpoint", func() {
 		})
 
 		AfterEach(func() {
-			// Cleanup: delete checkpoint if it exists
+			By("Cleaning up Checkpoint")
 			cp := &agentsv1alpha1.Checkpoint{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      checkpointName,
@@ -72,7 +72,7 @@ var _ = Describe("Checkpoint", func() {
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: checkpointName, Namespace: Namespace}, &agentsv1alpha1.Checkpoint{})
 				return errors.IsNotFound(err)
-			}, time.Second*30, time.Second).Should(BeTrue())
+			}, time.Second*10, time.Second).Should(BeTrue())
 		})
 	})
 })

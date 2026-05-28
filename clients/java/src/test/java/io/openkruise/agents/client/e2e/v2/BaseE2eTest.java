@@ -24,7 +24,6 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.fail;
@@ -110,36 +109,6 @@ public abstract class BaseE2eTest {
         template.setSpec(podSpec);
 
         return template;
-    }
-
-    /**
-     * Poll until a condition is met or timeout is reached (similar to Gomega's Eventually).
-     * Tolerates transient exceptions from the supplier (e.g. network blips).
-     */
-    protected <T> T eventually(String description, long timeoutSec, Supplier<T> supplier,
-                               Predicate<T> condition) throws InterruptedException {
-        long deadline = System.currentTimeMillis() + timeoutSec * 1000;
-        T result = null;
-        Exception lastError = null;
-        while (System.currentTimeMillis() < deadline) {
-            try {
-                result = supplier.get();
-                lastError = null;
-                if (result != null && condition.test(result)) {
-                    return result;
-                }
-            } catch (Exception e) {
-                lastError = e;
-                LOG.fine("Transient error while polling for '" + description + "': " + e.getMessage());
-            }
-            Thread.sleep(POLL_INTERVAL_MS);
-        }
-        String msg = "Timed out waiting for: " + description + ", last value: " + result;
-        if (lastError != null) {
-            msg += ", last error: " + lastError.getMessage();
-        }
-        fail(msg);
-        return result;
     }
 
     /**

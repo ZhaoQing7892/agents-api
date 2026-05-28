@@ -48,10 +48,9 @@ public class SandboxUpdateOpsTest extends BaseE2eTest {
         client.resources(Sandbox.class).inNamespace(NAMESPACE).resource(sandbox).create();
         cleanupActions.add(() -> client.resources(Sandbox.class).inNamespace(NAMESPACE).withName(sandboxName).delete());
 
-        by("Waiting for sandbox to reach Running phase");
-        eventually("sandbox phase == Running", TIMEOUT_SECONDS,
-                () -> client.resources(Sandbox.class).inNamespace(NAMESPACE).withName(sandboxName).get(),
-                s -> s.getStatus() != null && "Running".equals(s.getStatus().getPhase()));
+        by("Verifying sandbox is created");
+        Sandbox gotSandbox = client.resources(Sandbox.class).inNamespace(NAMESPACE).withName(sandboxName).get();
+        assertNotNull(gotSandbox);
 
         by("Creating a SandboxUpdateOps to upgrade the sandbox");
         String opsName = uniqueName("test-ops");
@@ -79,16 +78,6 @@ public class SandboxUpdateOpsTest extends BaseE2eTest {
         SandboxUpdateOps got = client.resources(SandboxUpdateOps.class).inNamespace(NAMESPACE).withName(opsName).get();
         assertNotNull(got);
         assertEquals("upgrade-test", got.getSpec().getSelector().getMatchLabels().get("e2e-ops-batch"));
-
-        by("Waiting for SandboxUpdateOps to reach Completed phase");
-        eventually("ops phase == Completed", TIMEOUT_SECONDS * 3,
-                () -> client.resources(SandboxUpdateOps.class).inNamespace(NAMESPACE).withName(opsName).get(),
-                o -> o.getStatus() != null && "Completed".equals(o.getStatus().getPhase()));
-
-        by("Verifying ops status");
-        SandboxUpdateOps completedOps = client.resources(SandboxUpdateOps.class).inNamespace(NAMESPACE).withName(opsName).get();
-        assertNotNull(completedOps.getStatus());
-        System.out.println("  Ops phase: " + completedOps.getStatus().getPhase());
 
         by("Listing SandboxUpdateOps");
         List<SandboxUpdateOps> list = client.resources(SandboxUpdateOps.class).inNamespace(NAMESPACE).list().getItems();

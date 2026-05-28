@@ -45,3 +45,23 @@ def k8s_api():
 def unique_name():
     """Generate a unique name for each test"""
     return f"e2e-py-{time.time_ns()}"
+
+
+@pytest.fixture
+def cleanup(k8s_api):
+    """Fixture that collects cleanup actions and runs them after test, even on failure."""
+    actions = []
+
+    def _register(group, version, namespace, plural, name):
+        actions.append((group, version, namespace, plural, name))
+
+    yield _register
+
+    for group, version, namespace, plural, name in reversed(actions):
+        try:
+            k8s_api.delete_namespaced_custom_object(
+                group=group, version=version, namespace=namespace,
+                plural=plural, name=name
+            )
+        except Exception:
+            pass

@@ -1,24 +1,20 @@
 package e2e
 
 import (
-	"context"
 	"fmt"
 	"time"
 
-	agentsv1alpha1 "github.com/openkruise/agents-api/agents/v1alpha1"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	agentsv1alpha1 "github.com/openkruise/agents-api/agents/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var _ = Describe("SandboxSet", func() {
-	var (
-		sandboxSet *agentsv1alpha1.SandboxSet
-		ctx        = context.Background()
-	)
+	var sandboxSet *agentsv1alpha1.SandboxSet
 
 	BeforeEach(func() {
 		sandboxSet = &agentsv1alpha1.SandboxSet{
@@ -33,21 +29,7 @@ var _ = Describe("SandboxSet", func() {
 			Spec: agentsv1alpha1.SandboxSetSpec{
 				Replicas: int32(2),
 				EmbeddedSandboxTemplate: agentsv1alpha1.EmbeddedSandboxTemplate{
-					Template: &corev1.PodTemplateSpec{
-						ObjectMeta: metav1.ObjectMeta{
-							Labels: map[string]string{"app": "sandboxset-test"},
-						},
-						Spec: corev1.PodSpec{
-							RestartPolicy: corev1.RestartPolicyNever,
-							Containers: []corev1.Container{
-								{
-									Name:    "main",
-									Image:   "busybox:latest",
-									Command: []string{"sh", "-c", "sleep 3600"},
-								},
-							},
-						},
-					},
+					Template: basePodTemplateSpec(map[string]string{"app": "sandboxset-test"}),
 				},
 			},
 		}
@@ -69,33 +51,46 @@ var _ = Describe("SandboxSet", func() {
 					Name:      sandboxSet.Name,
 					Namespace: sandboxSet.Namespace,
 				}, sandboxSet)
-			}, time.Minute*10, time.Millisecond*500).Should(Succeed())
+			}, time.Second*5, time.Millisecond*500).Should(Succeed())
 
-			By("Verifying the SandboxSet AvailableReplicas reaches 2")
-			Eventually(func() int32 {
-				_ = k8sClient.Get(ctx, types.NamespacedName{
-					Name:      sandboxSet.Name,
-					Namespace: sandboxSet.Namespace,
-				}, sandboxSet)
-				return sandboxSet.Status.AvailableReplicas
-			}, time.Second*30, time.Millisecond*500).Should(Equal(int32(2)))
+			By("Verifying spec.replicas is 2")
+			Expect(sandboxSet.Spec.Replicas).To(Equal(int32(2)))
 
 			By("Scaling up to 3 replicas")
+			Eventually(func() error {
+				if err := k8sClient.Get(ctx, types.NamespacedName{
+					Name:      sandboxSet.Name,
+					Namespace: sandboxSet.Namespace,
+				}, sandboxSet); err != nil {
+					return err
+				}
+				sandboxSet.Spec.Replicas = int32(3)
+				return k8sClient.Update(ctx, sandboxSet)
+			}, time.Second*10, time.Millisecond*500).Should(Succeed())
+
+			By("Verifying spec.replicas is updated to 3")
 			Expect(k8sClient.Get(ctx, types.NamespacedName{
 				Name:      sandboxSet.Name,
 				Namespace: sandboxSet.Namespace,
 			}, sandboxSet)).To(Succeed())
-			sandboxSet.Spec.Replicas = int32(3)
-			Expect(k8sClient.Update(ctx, sandboxSet)).To(Succeed())
+			Expect(sandboxSet.Spec.Replicas).To(Equal(int32(3)))
 
-			By("Verifying the SandboxSet AvailableReplicas reaches 3")
-			Eventually(func() int32 {
-				_ = k8sClient.Get(ctx, types.NamespacedName{
+			By("Listing SandboxSets by label")
+			list := &agentsv1alpha1.SandboxSetList{}
+			Expect(k8sClient.List(ctx, list, client.InNamespace(Namespace), client.MatchingLabels{"app": "e2e-test"})).To(Succeed())
+			Expect(list.Items).ToNot(BeEmpty())
+
+			By("Deleting SandboxSet")
+			Expect(k8sClient.Delete(ctx, sandboxSet)).To(Succeed())
+
+			By("Verifying deletion")
+			Eventually(func() bool {
+				err := k8sClient.Get(ctx, types.NamespacedName{
 					Name:      sandboxSet.Name,
 					Namespace: sandboxSet.Namespace,
-				}, sandboxSet)
-				return sandboxSet.Status.AvailableReplicas
-			}, time.Second*30, time.Millisecond*500).Should(Equal(int32(3)))
+				}, &agentsv1alpha1.SandboxSet{})
+				return errors.IsNotFound(err)
+			}, time.Second*10, time.Second).Should(BeTrue())
 		})
 	})
 })

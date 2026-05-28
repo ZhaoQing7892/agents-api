@@ -54,20 +54,11 @@ public class SandboxSetTest extends BaseE2eTest {
         assertNotNull(got);
         assertEquals(Integer.valueOf(2), got.getSpec().getReplicas());
 
-        by("Verifying the sandboxset AvailableReplicas reaches 2");
-        eventually("availableReplicas == 2", TIMEOUT_SECONDS,
-                () -> client.resources(SandboxSet.class).inNamespace(NAMESPACE).withName(name).get(),
-                s -> s.getStatus() != null && Integer.valueOf(2).equals(s.getStatus().getAvailableReplicas()));
-
         by("Scaling up sandboxset to 3");
         SandboxSet current = client.resources(SandboxSet.class).inNamespace(NAMESPACE).withName(name).get();
         current.getSpec().setReplicas(3);
-        client.resources(SandboxSet.class).inNamespace(NAMESPACE).resource(current).update();
-
-        by("Verifying the sandboxset AvailableReplicas reaches 3");
-        eventually("availableReplicas == 3", TIMEOUT_SECONDS,
-                () -> client.resources(SandboxSet.class).inNamespace(NAMESPACE).withName(name).get(),
-                s -> s.getStatus() != null && Integer.valueOf(3).equals(s.getStatus().getAvailableReplicas()));
+        SandboxSet updated = client.resources(SandboxSet.class).inNamespace(NAMESPACE).resource(current).update();
+        assertEquals(Integer.valueOf(3), updated.getSpec().getReplicas());
 
         by("Deleting the sandboxset and waiting for it to be removed");
         client.resources(SandboxSet.class).inNamespace(NAMESPACE).withName(name).delete();

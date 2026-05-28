@@ -69,7 +69,7 @@ run_go_test() {
   echo ""
   echo "=== Running Go SDK E2E Test ==="
   cd "${PROJECT_ROOT}"
-  go test -v -timeout "${TIMEOUT}s" ./test/e2e/...
+  go test -v -timeout "${TIMEOUT}s" ./test/e2e/... -ginkgo.v
   echo "Go SDK E2E Test PASSED"
 }
 
@@ -86,7 +86,7 @@ run_python_test() {
   echo "=== Running Python SDK E2E Test ==="
   cd "${PROJECT_ROOT}/clients/python/openkruise"
   pip install -e ".[test]" -q 2>/dev/null || pip3 install -e ".[test]" -q 2>/dev/null
-  python -m pytest test/ -v
+  python -m pytest test/ -v -s
   echo "Python SDK E2E Test PASSED"
 }
 

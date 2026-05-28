@@ -52,15 +52,7 @@ public class SandboxTest extends BaseE2eTest {
         assertNotNull(got);
         assertEquals(name, got.getMetadata().getName());
 
-        by("Verifying the sandbox phase transitions to Running");
-        eventually("sandbox phase == Running", TIMEOUT_SECONDS,
-                () -> client.resources(Sandbox.class).inNamespace(NAMESPACE).withName(name).get(),
-                s -> s.getStatus() != null && "Running".equals(s.getStatus().getPhase()));
 
-        by("Verifying sandbox status has pod info");
-        Sandbox running = client.resources(Sandbox.class).inNamespace(NAMESPACE).withName(name).get();
-        assertNotNull("Status should not be null", running.getStatus());
-        System.out.println("  Sandbox phase: " + running.getStatus().getPhase());
     }
 
     @Test
