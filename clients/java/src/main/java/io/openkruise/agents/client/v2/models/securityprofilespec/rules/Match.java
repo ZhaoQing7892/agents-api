@@ -1,7 +1,7 @@
 package io.openkruise.agents.client.v2.models.securityprofilespec.rules;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({"domains","headers","methods","paths","ports","queryParams"})
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({"domains","headers","methods","paths","ports","queryParams","schemes"})
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class Match implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
@@ -151,6 +151,24 @@ public class Match implements io.fabric8.kubernetes.api.model.KubernetesResource
 
     public void setQueryParams(java.util.List<io.openkruise.agents.client.v2.models.securityprofilespec.rules.match.QueryParams> queryParams) {
         this.queryParams = queryParams;
+    }
+
+    /**
+     * Schemes filters by the request's :scheme pseudo-header (e.g. "http",
+     * "https", or custom schemes used by gRPC/other protocols). Multiple
+     * entries are ORed. Matching is case-insensitive.
+     */
+    @com.fasterxml.jackson.annotation.JsonProperty("schemes")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Schemes filters by the request's :scheme pseudo-header (e.g. \"http\",\n\"https\", or custom schemes used by gRPC/other protocols). Multiple\nentries are ORed. Matching is case-insensitive.")
+    @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
+    private java.util.List<String> schemes;
+
+    public java.util.List<String> getSchemes() {
+        return schemes;
+    }
+
+    public void setSchemes(java.util.List<String> schemes) {
+        this.schemes = schemes;
     }
 }
 
