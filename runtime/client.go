@@ -3,8 +3,8 @@ package runtime
 import (
 	"net/http"
 
-	"github.com/openkruise/agents-api/sdk/proto/envd/filesystem/filesystemconnect"
-	"github.com/openkruise/agents-api/sdk/proto/envd/process/processconnect"
+	"github.com/openkruise/agents-api/runtime/envd/filesystem/filesystemconnect"
+	"github.com/openkruise/agents-api/runtime/envd/process/processconnect"
 )
 
 // Client talks directly to the runtime service of a single sandbox,

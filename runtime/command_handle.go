@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	"github.com/openkruise/agents-api/sdk/proto/envd/process"
+	"github.com/openkruise/agents-api/runtime/envd/process"
 )
 
 // CommandResult represents the result of a command execution.

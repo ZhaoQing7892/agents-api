@@ -4,98 +4,99 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
-	"github.com/openkruise/agents-api/sdk/runtime"
-	"github.com/openkruise/agents-api/sdk/sandbox"
+	"github.com/openkruise/agents-api/runtime"
 )
 
 const (
-	apiKey   = "your-apiKey"
-	domain   = "your.domain.com"
-	template = "code-interpreter"
+	sandboxName = "openclaw-advanced-k8s-sbs-lght9"
+	namespace   = "default"
+	gatewayUrl  = "127.0.0.1:7788"
 )
 
 func main() {
 	ctx := context.Background()
 
-	fmt.Println("========== E2B Sandbox Go SDK Example ==========")
+	fmt.Println("\n========== runtime direct client example ==========")
 
-	// ========== 1. Connection Configuration ==========
-	// Defaults: Protocol = Native (subdomain-based), Scheme = "https".
-	// Override below only when you need Private protocol or http.
-	//
-	//   Native  -> API: https://api.<domain>
-	//              Sandbox: https://<port>-<sandboxID>.<domain>
-	//   Private -> API: <scheme>://<domain>/kruise/api
-	//              Sandbox: <scheme>://<domain>/kruise/<sandboxID>/<port>
-	configOpts := []sandbox.ConnectionConfigOption{
-		sandbox.WithAPIKey(apiKey),
-		sandbox.WithDomain(domain),
-	}
-
-	// ========== 2. Sandbox Management API ==========
-	api := sandbox.NewSandboxApi(sandbox.NewConnectionConfig(configOpts...))
-
-	fmt.Println("\n--- Listing existing sandboxes ---")
-	listSandboxes(ctx, api)
-
-	// ========== 3. Create Sandbox ==========
-	fmt.Println("\n--- Creating sandbox ---")
-	sb, err := sandbox.Create(ctx, template,
-		sandbox.WithConfig(configOpts...),
-		sandbox.WithTimeout(300),
+	// Build a runtime client directly from the K8s Sandbox CR.
+	// NewFromK8s automatically resolves sandboxID and runtimeToken.
+	c, err := runtime.NewFromK8s(ctx, namespace, sandboxName,
+		runtime.WithDomain(gatewayUrl),
 	)
 	if err != nil {
-		log.Fatalf("Failed to create sandbox: %v", err)
+		fmt.Printf("    Error creating runtime client: %v\n", err)
+		return
 	}
-	fmt.Printf("Successfully created sandbox: %s (template: %s)\n", sb.SandboxID(), sb.TemplateID())
 
-	// Ensure cleanup on exit.
-	defer cleanup(ctx, sb)
+	fmt.Printf("Sandbox ID: %s\n", c.SandboxID())
+	fmt.Printf("runtime URL: %s\n", c.RuntimeURL())
 
-	// ========== 4. Sandbox Info ==========
-	fmt.Println("\n--- Sandbox Info ---")
-	showSandboxInfo(ctx, sb)
-
-	// ========== 5. Command Operations Demo ==========
+	// ========== 1. Command Operations Demo ==========
 	fmt.Println("\n--- Command Operations Demo ---")
-	demonstrateCommandOperations(ctx, sb.Commands)
+	demonstrateCommandOperations(ctx, c.Commands)
 
-	// ========== 6. Filesystem Operations Demo ==========
+	// ========== 2. Filesystem Operations Demo ==========
 	fmt.Println("\n--- Filesystem Operations Demo ---")
-	demonstrateFileOperations(ctx, sb.Files)
+	demonstrateFileOperations(ctx, c.Files)
 
-	fmt.Println("\n========== Example completed ==========")
+	// ========== 2. Write And Read File ==========
+	fmt.Println("\n--- Filesystem Write And Read File Demo ---")
+	writeAndReadFile(ctx, c.Files)
+
+	fmt.Println("\n========== done ==========")
 }
 
-// listSandboxes lists all running sandboxes.
-func listSandboxes(ctx context.Context, api *sandbox.SandboxApi) {
-	sandboxes, err := api.List(ctx)
-	if err != nil {
-		fmt.Printf("Error listing sandboxes: %v\n", err)
-		return
-	}
-	fmt.Printf("Total sandboxes: %d\n", len(sandboxes))
-	for _, s := range sandboxes {
-		fmt.Printf("  - ID: %s, Template: %s, State: %s\n", s.SandboxID, s.TemplateID, s.State)
-	}
-}
+func writeAndReadFile(ctx context.Context, files *runtime.Filesystem) {
+	fmt.Println("\n--- Test: Write File ---")
+	testPath := fmt.Sprintf("/tmp/go_sdk_test_%d.txt", time.Now().UnixNano())
+	testContent := "Hello from Go SDK! 你好世界! " + time.Now().Format(time.RFC3339)
 
-// showSandboxInfo prints detailed information about the sandbox.
-func showSandboxInfo(ctx context.Context, sb *sandbox.Sandbox) {
-	info, err := sb.GetInfo(ctx)
+	fmt.Printf("[Write] Path: %s\n", testPath)
+	fmt.Printf("[Write] Content: %s\n", testContent)
+
+	writeInfo, err := files.WriteText(ctx, testPath, testContent)
 	if err != nil {
-		fmt.Printf("Error getting info: %v\n", err)
-		return
+		log.Fatalf("Failed to write file: %v", err)
 	}
-	fmt.Printf("SandboxID:  %s\n", info.SandboxID)
-	fmt.Printf("TemplateID: %s\n", info.TemplateID)
-	fmt.Printf("State:      %s\n", info.State)
-	fmt.Printf("CPU:        %d cores\n", info.CpuCount)
-	fmt.Printf("Memory:     %d MB\n", info.MemoryMB)
-	fmt.Printf("Disk:       %d MB\n", info.DiskSizeMB)
-	fmt.Printf("Metadata:   %v\n", info.Metadata)
+	fmt.Printf("[Write] Success! WriteInfo: %+v\n", writeInfo)
+
+	// ========== 5. Test file read ==========
+	fmt.Println("\n--- Test: Read File ---")
+	readContent, err := files.ReadText(ctx, testPath)
+	if err != nil {
+		log.Fatalf("Failed to read file: %v", err)
+	}
+	fmt.Printf("[Read] Content: %s\n", readContent)
+
+	// ========== 6. Verify ==========
+	fmt.Println("\n--- Verification ---")
+	if readContent == testContent {
+		fmt.Println("PASS: Written content matches read content!")
+	} else {
+		fmt.Printf("FAIL: Content mismatch!\n  Expected: %s\n  Got:      %s\n", testContent, readContent)
+		os.Exit(1)
+	}
+
+	// ========== 7. Cleanup ==========
+	fmt.Println("\n--- Cleanup ---")
+	if err := files.Remove(ctx, testPath); err != nil {
+		fmt.Printf("Warning: Failed to remove test file: %v\n", err)
+	} else {
+		fmt.Printf("Removed test file: %s\n", testPath)
+	}
+
+	// Verify removal
+	exists, err := files.Exists(ctx, testPath)
+	if err != nil {
+		fmt.Printf("Warning: Failed to check existence: %v\n", err)
+	} else {
+		fmt.Printf("File exists after removal: %v\n", exists)
+	}
+
+	fmt.Println("\n========== Test Complete ==========")
 }
 
 // demonstrateCommandOperations exercises the Commands API surface.
@@ -268,15 +269,4 @@ func listEntries(ctx context.Context, files *runtime.Filesystem, path string) {
 	for _, e := range entries {
 		fmt.Printf("      - %s %s (size: %d)\n", e.Type, e.Name, e.Size)
 	}
-}
-
-// cleanup kills the sandbox at the end of execution.
-func cleanup(ctx context.Context, sb *sandbox.Sandbox) {
-	fmt.Println("\n--- Cleaning up ---")
-	killed, err := sb.Kill(ctx)
-	if err != nil {
-		fmt.Printf("Failed to kill sandbox: %v\n", err)
-		return
-	}
-	fmt.Printf("Sandbox %s killed: %v\n", sb.SandboxID(), killed)
 }

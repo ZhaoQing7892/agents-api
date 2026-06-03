@@ -1,4 +1,4 @@
-package sandbox
+package e2b
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/openkruise/agents-api/sdk/proto/api"
+	"github.com/openkruise/agents-api/e2b/api"
 )
 
 // SandboxInfo represents information about a sandbox.

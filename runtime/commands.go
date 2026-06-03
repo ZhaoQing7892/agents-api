@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"connectrpc.com/connect"
-	"github.com/openkruise/agents-api/sdk/proto/envd/process"
-	"github.com/openkruise/agents-api/sdk/proto/envd/process/processconnect"
+	"github.com/openkruise/agents-api/runtime/envd/process"
+	"github.com/openkruise/agents-api/runtime/envd/process/processconnect"
 )
 
 // ProcessInfo represents information about a running process.

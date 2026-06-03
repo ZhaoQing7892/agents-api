@@ -1,9 +1,10 @@
-package sandbox
+package e2b
 
 import (
 	"context"
 	"fmt"
-	"github.com/openkruise/agents-api/sdk/runtime"
+
+	"github.com/openkruise/agents-api/runtime"
 )
 
 // SandboxOption configures sandbox creation or connection behavior.

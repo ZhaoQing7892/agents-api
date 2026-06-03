@@ -1,4 +1,4 @@
-package sandbox
+package e2b
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/openkruise/agents-api/sdk/proto/api"
-	"github.com/openkruise/agents-api/sdk/runtime"
+	"github.com/openkruise/agents-api/e2b/api"
+	"github.com/openkruise/agents-api/runtime"
 )
 
 // Protocol defines the URL routing protocol.

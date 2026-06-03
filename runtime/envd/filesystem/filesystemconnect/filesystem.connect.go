@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	filesystem "github.com/openkruise/agents-api/sdk/proto/envd/filesystem"
+	filesystem "github.com/openkruise/agents-api/runtime/envd/filesystem"
 	http "net/http"
 	strings "strings"
 )

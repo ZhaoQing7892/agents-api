@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/openkruise/agents-api/sdk/proto/envd/filesystem"
-	"github.com/openkruise/agents-api/sdk/proto/envd/filesystem/filesystemconnect"
+	"github.com/openkruise/agents-api/runtime/envd/filesystem"
+	"github.com/openkruise/agents-api/runtime/envd/filesystem/filesystemconnect"
 )
 
 const (
