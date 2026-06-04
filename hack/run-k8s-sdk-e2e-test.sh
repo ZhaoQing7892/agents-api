@@ -76,7 +76,7 @@ run_go_test() {
 run_java_test() {
   echo ""
   echo "=== Running Java v2 SDK E2E Test ==="
-  cd "${PROJECT_ROOT}/clients/java"
+  cd "${PROJECT_ROOT}/k8s/java"
   mvn test -Dtest="io.openkruise.agents.client.e2e.v2.*Test" -q
   echo "Java v2 SDK E2E Test PASSED"
 }
@@ -84,7 +84,7 @@ run_java_test() {
 run_python_test() {
   echo ""
   echo "=== Running Python SDK E2E Test ==="
-  cd "${PROJECT_ROOT}/clients/python/openkruise"
+  cd "${PROJECT_ROOT}/k8s/python/openkruise"
   pip install -e ".[test]" -q 2>/dev/null || pip3 install -e ".[test]" -q 2>/dev/null
   python -m pytest test/ -v -s
   echo "Python SDK E2E Test PASSED"

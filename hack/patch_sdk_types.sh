@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Patch generated SDK type placeholders with correct Kubernetes types.
 #
-# Reads replacement rules from clients/codegen/type_mapping.yaml and applies them to
+# Reads replacement rules from k8s/codegen/type_mapping.yaml and applies them to
 # generated Java and Python SDK files. Prints a preview of all changes
 # before applying.
 #
@@ -17,10 +17,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-CODEGEN_DIR="${PROJECT_ROOT}/clients/codegen"
+CODEGEN_DIR="${PROJECT_ROOT}/k8s/codegen"
 MAPPING_FILE="${CODEGEN_DIR}/type_mapping.yaml"
-JAVA_MODELS_DIR="${PROJECT_ROOT}/clients/java/src/main/java/io/openkruise/agents/client/v2/models"
-PYTHON_MODELS_DIR="${PROJECT_ROOT}/clients/python/openkruise/agents/models"
+JAVA_MODELS_DIR="${PROJECT_ROOT}/k8s/java/src/main/java/io/openkruise/agents/client/v2/models"
+PYTHON_MODELS_DIR="${PROJECT_ROOT}/k8s/python/openkruise/agents/models"
 
 # ── Parse arguments ───────────────────────────────────────────────────────────
 PATCH_JAVA=true

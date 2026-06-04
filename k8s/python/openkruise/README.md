@@ -19,14 +19,14 @@ The Agents API Python Client is a comprehensive library for managing Sandbox and
 ```bash
 # Replace "main" with a specific version tag (e.g., "v0.1.0") from
 # https://github.com/openkruise/agents-api/releases to pin a version tag.
-pip install git+https://github.com/openkruise/agents-api.git@${VERSION}#subdirectory=clients/python/openkruise
+pip install git+https://github.com/openkruise/agents-api.git@${VERSION}#subdirectory=k8s/python/openkruise
 ```
 
 ### Install from Source
 
 ```bash
 git clone https://github.com/openkruise/agents-api.git
-cd clients/python/openkruise
+cd k8s/python/openkruise
 pip install -e .
 ```
 

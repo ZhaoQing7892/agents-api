@@ -33,7 +33,7 @@ the bottom of the page. Just click it to download.
 
 ## Overview
 
-[generate-java-model.sh](/clients/java/generate-java-model.sh) is a script used to generate Java model classes from OpenKruise Agents CRD (Custom Resource Definitions).
+[generate-java-model.sh](/k8s/java/generate-java-model.sh) is a script used to generate Java model classes from OpenKruise Agents CRD (Custom Resource Definitions).
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ This script supports the following environment variable configurations:
 ### Running the Script
 
 ```
-cd clients/java
+cd k8s/java
 bash generate-java-model.sh
 ```
 
@@ -78,7 +78,7 @@ The generated Java model classes will be placed in the current working directory
 
 ## Customizing Output Directory Configuration
 
-If you need to customize the output directory, you should modify [generate-java-model.sh](/clients/java/generate-java-model.sh) -u, -n, and -p parameters in the file:
+If you need to customize the output directory, you should modify [generate-java-model.sh](/k8s/java/generate-java-model.sh) -u, -n, and -p parameters in the file:
 
 ### Parameters Explanation
 - **`-u`**: Specifies the URL addresses of CRD YAML files

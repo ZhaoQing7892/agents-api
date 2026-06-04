@@ -44,7 +44,7 @@ The script generates the following files:
 - **JSON Schemas**: Stored in the `schemas/` directory.
 - **Python Models**: Stored in the `models/` directory.
 
-Each generated model file corresponds to a specific Kubernetes CRD (e.g., [sandbox.py](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/openkruise/agents/models/sandbox.py), [sandboxset.py](file:///Users/issuser/codes/ZhaoQing7892/agents-api/clients/python/openkruise/agents/models/sandboxset.py)).
+Each generated model file corresponds to a specific Kubernetes CRD (e.g., [sandbox.py](file:///Users/issuser/codes/ZhaoQing7892/agents-api/k8s/python/openkruise/agents/models/sandbox.py), [sandboxset.py](file:///Users/issuser/codes/ZhaoQing7892/agents-api/k8s/python/openkruise/agents/models/sandboxset.py)).
 
 ## Customization
 

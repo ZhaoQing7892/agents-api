@@ -1,7 +1,7 @@
 # client-java
 
 ## Generate
-[Guide to generate Java codes from CustomResourceDefinition](/clients/java/docs/generate-model-from-crd.md)
+[Guide to generate Java codes from CustomResourceDefinition](/k8s/java/docs/generate-model-from-crd.md)
 
 ## Usage
 

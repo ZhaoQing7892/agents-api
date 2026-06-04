@@ -36,7 +36,7 @@ fi
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 CRD_SOURCE_DIR="${PROJECT_ROOT}/agents/crds"
-MODELS_DIR="${PROJECT_ROOT}/clients/python/openkruise/agents/models"
+MODELS_DIR="${PROJECT_ROOT}/k8s/python/openkruise/agents/models"
 
 WORK_DIR=$(mktemp -d)
 trap "rm -rf ${WORK_DIR}" EXIT
