@@ -6,11 +6,11 @@
 
 项目支持三种语言的 SDK 生成：
 
-| 语言     | 生成工具                              | 输出目录              |
-|--------|-----------------------------------|-------------------|
-| Go     | k8s code-generator                | `client/`         |
-| Java   | Fabric8 java-generator-cli 6.14.0 | `clients/java/`   |
-| Python | datamodel-codegen（Pydantic v2）    | `clients/python/` |
+| 语言     | 生成工具                              | 输出目录          |
+|--------|-----------------------------------|---------------|
+| Go     | k8s code-generator                | `client/`     |
+| Java   | Fabric8 java-generator-cli 6.14.0 | `k8s/java/`   |
+| Python | datamodel-codegen（Pydantic v2）    | `k8s/python/` |
 
 ## 前置依赖
 
@@ -45,7 +45,8 @@ make generate-all
 make generate-all SKIP_UPDATE=true
 ```
 
-> **⚠️ 注意：** 上游同步通过 GitHub API 下载 CRD 文件，未携带 Token 时可能触发限流（HTTP 403）。如果遇到限流，可以手动将最新的 CRD YAML 文件放到 `agents/crds/` 目录下，然后使用 `SKIP_UPDATE=true` 跳过自动同步。
+> **⚠️ 注意：** 上游同步通过 GitHub API 下载 CRD 文件，未携带 Token 时可能触发限流（HTTP 403）。如果遇到限流，可以手动将最新的
+> CRD YAML 文件放到 `agents/crds/` 目录下，然后使用 `SKIP_UPDATE=true` 跳过自动同步。
 
 ### 单独生成某个语言
 
@@ -92,14 +93,14 @@ hack/generate_client.sh
 ```
 hack/generate_java_sdk.sh
   → Fabric8 java-generator-cli
-  → 输出到 clients/java/.../models/
+  → 输出到 k8s/java/.../models/
   → hack/patch_sdk_types.sh --java（类型修补）
 ```
 
 **生成的 Java 模型**位于：
 
 ```
-clients/java/src/main/java/io/openkruise/agents/client/v2/models/
+k8s/java/src/main/java/io/openkruise/agents/client/v2/models/
 ```
 
 包含 Sandbox、SandboxSet、SandboxTemplate、SandboxClaim、SandboxUpdateOps、Checkpoint 等所有 CRD 资源的 Java 类型定义。
@@ -112,14 +113,14 @@ clients/java/src/main/java/io/openkruise/agents/client/v2/models/
 hack/generate_python_sdk.sh
   → datamodel-codegen（Pydantic v2）
   → ruff 格式化
-  → 输出到 clients/python/.../models/
+  → 输出到 k8s/python/.../models/
   → hack/patch_sdk_types.sh --python（类型修补 + ruff 格式化）
 ```
 
 **生成的 Python 模型**位于：
 
 ```
-clients/python/openkruise/agents/models/
+k8s/python/openkruise/agents/models/
 ```
 
 每个 CRD 对应一个 Python 文件（如 `sandbox.py`、`sandboxset.py`），包含 Pydantic BaseModel 类定义。
@@ -141,7 +142,7 @@ CRD 中标记了 `x-kubernetes-preserve-unknown-fields: true` 的字段，在代
 
 ### 修补规则配置
 
-所有替换规则集中维护在 `clients/codegen/type_mapping.yaml`：
+所有替换规则集中维护在 `k8s/codegen/type_mapping.yaml`：
 
 ```yaml
 fields:
@@ -184,7 +185,7 @@ fields:
 agents-api/
 ├── agents/crds/                    # CRD YAML 定义（数据源）
 ├── client/                         # Go clientset / lister / informer
-├── clients/
+├── k8s/
 │   ├── codegen/                    # 代码生成后处理工具
 │   │   ├── type_mapping.yaml       # 类型替换规则配置
 │   │   ├── patch_java_types.py     # Java 类型修补脚本

@@ -64,13 +64,13 @@ jobs:
       
       - name: Update version in pom.xml
         run: |
-          cd clients/java
+          cd k8s/java
           mvn versions:set -DnewVersion=${{ github.event.inputs.version }}
           mvn versions:commit
       
       - name: Build and publish to Maven Central
         run: |
-          cd clients/java
+          cd k8s/java
           mvn clean deploy -Psign-artifacts -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}" --batch-mode
         env:
           GPG_TTY: ''
@@ -83,7 +83,7 @@ jobs:
         with:
           name: maven-artifacts
           path: |
-            clients/java/target/*.jar
-            clients/java/target/*.pom
-            clients/java/target/*.asc
+            k8s/java/target/*.jar
+            k8s/java/target/*.pom
+            k8s/java/target/*.asc
           retention-days: 1

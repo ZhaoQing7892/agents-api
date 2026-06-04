@@ -6,11 +6,11 @@ This document describes how to generate multi-language SDK client code for the K
 
 The project supports SDK generation for three languages:
 
-| Language | Generator | Output Directory |
-| --- | --- | --- |
-| Go | k8s code-generator | `client/` |
-| Java | Fabric8 java-generator-cli 6.14.0 | `clients/java/` |
-| Python | datamodel-codegen (Pydantic v2) | `clients/python/` |
+| Language | Generator                         | Output Directory |
+|----------|-----------------------------------|------------------|
+| Go       | k8s code-generator                | `client/`        |
+| Java     | Fabric8 java-generator-cli 6.14.0 | `k8s/java/`      |
+| Python   | datamodel-codegen (Pydantic v2)   | `k8s/python/`    |
 
 ## Prerequisites
 
@@ -45,7 +45,9 @@ make generate-all
 make generate-all SKIP_UPDATE=true
 ```
 
-> **⚠️ Note:** Upstream sync downloads CRD files via the GitHub API. Without a token, you may hit rate limiting (HTTP 403). If this happens, manually place the latest CRD YAML files into the `agents/crds/` directory, then use `SKIP_UPDATE=true` to skip the automatic sync.
+> **⚠️ Note:** Upstream sync downloads CRD files via the GitHub API. Without a token, you may hit rate limiting (HTTP
+> 403). If this happens, manually place the latest CRD YAML files into the `agents/crds/` directory, then use
+`SKIP_UPDATE=true` to skip the automatic sync.
 
 ### Generate a Single Language
 
@@ -92,17 +94,18 @@ Uses Fabric8 java-generator-cli to generate Java model classes from CRD YAML def
 ```
 hack/generate_java_sdk.sh
   → Fabric8 java-generator-cli
-  → Output: clients/java/.../models/
+  → Output: k8s/java/.../models/
   → hack/patch_sdk_types.sh --java (type patching)
 ```
 
 **Generated Java models** are located at:
 
 ```
-clients/java/src/main/java/io/openkruise/agents/client/v2/models/
+k8s/java/src/main/java/io/openkruise/agents/client/v2/models/
 ```
 
-This includes Java type definitions for all CRD resources: Sandbox, SandboxSet, SandboxTemplate, SandboxClaim, SandboxUpdateOps, Checkpoint, etc.
+This includes Java type definitions for all CRD resources: Sandbox, SandboxSet, SandboxTemplate, SandboxClaim,
+SandboxUpdateOps, Checkpoint, etc.
 
 ### Python SDK
 
@@ -112,14 +115,14 @@ Uses datamodel-codegen to generate Pydantic v2 models from CRD JSON Schema.
 hack/generate_python_sdk.sh
   → datamodel-codegen (Pydantic v2)
   → ruff formatting
-  → Output: clients/python/.../models/
+  → Output: k8s/python/.../models/
   → hack/patch_sdk_types.sh --python (type patching + ruff formatting)
 ```
 
 **Generated Python models** are located at:
 
 ```
-clients/python/openkruise/agents/models/
+k8s/python/openkruise/agents/models/
 ```
 
 Each CRD maps to a Python file (e.g. `sandbox.py`, `sandboxset.py`), containing Pydantic BaseModel class definitions.
@@ -128,20 +131,21 @@ Each CRD maps to a Python file (e.g. `sandbox.py`, `sandboxset.py`), containing 
 
 ### Why Is Type Patching Needed?
 
-CRD fields marked with `x-kubernetes-preserve-unknown-fields: true` lose concrete type information during code generation:
+CRD fields marked with `x-kubernetes-preserve-unknown-fields: true` lose concrete type information during code
+generation:
 
-| Field | Go Type | Java Generated | Python Generated |
-| --- | --- | --- | --- |
-| `template` | `*corev1.PodTemplateSpec` | `AnyType` ❌ | `Any` ❌ |
-| `volumeClaimTemplates` | `[]corev1.PersistentVolumeClaim` | `AnyType` ❌ | `Any` ❌ |
-| `metadata` | `metav1.ObjectMeta` | ✅ Correct | `dict[str, Any]` ❌ |
-| `patch` | `runtime.RawExtension` | `AnyType` ❌ | ✅ Kept as Any |
+| Field                  | Go Type                          | Java Generated | Python Generated   |
+|------------------------|----------------------------------|----------------|--------------------|
+| `template`             | `*corev1.PodTemplateSpec`        | `AnyType` ❌    | `Any` ❌            |
+| `volumeClaimTemplates` | `[]corev1.PersistentVolumeClaim` | `AnyType` ❌    | `Any` ❌            |
+| `metadata`             | `metav1.ObjectMeta`              | ✅ Correct      | `dict[str, Any]` ❌ |
+| `patch`                | `runtime.RawExtension`           | `AnyType` ❌    | ✅ Kept as Any      |
 
 The type patching scripts automatically replace these placeholder types with the correct Kubernetes types.
 
 ### Patching Rules Configuration
 
-All replacement rules are centrally maintained in `clients/codegen/type_mapping.yaml`:
+All replacement rules are centrally maintained in `k8s/codegen/type_mapping.yaml`:
 
 ```yaml
 fields:
@@ -184,7 +188,7 @@ When patching runs, the script first prints all planned changes (file, line numb
 agents-api/
 ├── agents/crds/                    # CRD YAML definitions (data source)
 ├── client/                         # Go clientset / lister / informer
-├── clients/
+├── k8s/
 │   ├── codegen/                    # Post-generation tooling
 │   │   ├── type_mapping.yaml       # Type replacement rules
 │   │   ├── patch_java_types.py     # Java type patching script

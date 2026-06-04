@@ -35,7 +35,7 @@ fi
 # ── Configuration ─────────────────────────────────────────────────────────────
 FABRIC8_VERSION="6.14.0"
 CRD_SOURCE_DIR="${PROJECT_ROOT}/agents/crds"
-JAVA_TARGET_DIR="${PROJECT_ROOT}/clients/java/src/main/java"
+JAVA_TARGET_DIR="${PROJECT_ROOT}/k8s/java/src/main/java"
 TARGET_PACKAGE="io.openkruise.agents.client.v2.models"
 CLI_JAR_DIR="${PROJECT_ROOT}/bin"
 CLI_JAR="${CLI_JAR_DIR}/java-generator-cli-${FABRIC8_VERSION}.jar"
