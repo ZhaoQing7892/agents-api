@@ -8,9 +8,11 @@ This library is the canonical location of the Kruise Agents API definition and c
 We recommend using the go types in this repo. You may serialize them directly to JSON.
 
 ## What's included
-* The `client` package contains the go clientset to access Kruise Agents API.
+* The `client` package contain the go clientset to access Kruise Agents API.
 * The `agents` packages contain api definition in go
-* The `clients` contain clients for other languages including Python and Java
+* The `k8s` contain k8s clients in other languages including Python and Java
+* The `e2b` contain e2b clients in Golang
+* The `runtime` contain golang clients to access agent-runtime directly (command and file operations)
 
 ## Versioning
 For each `v0.x.y` Kruise Agents release, the corresponding agents-api will `v0.x.z`.
