@@ -52,7 +52,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * SnapshotInfo
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class SnapshotInfo {
   public static final String SERIALIZED_NAME_SNAPSHOT_I_D = "snapshotID";
   @SerializedName(SERIALIZED_NAME_SNAPSHOT_I_D)
@@ -72,7 +72,7 @@ public class SnapshotInfo {
   }
 
    /**
-   * Identifier of the snapshot template
+   * Identifier of the snapshot template including the tag. Uses namespace/alias when a name was provided (e.g. team-slug/my-snapshot:default), otherwise falls back to the raw template ID (e.g. abc123:default).
    * @return snapshotID
   **/
   @javax.annotation.Nonnull
@@ -265,7 +265,7 @@ public class SnapshotInfo {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -288,7 +288,7 @@ public class SnapshotInfo {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              SnapshotInfo instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

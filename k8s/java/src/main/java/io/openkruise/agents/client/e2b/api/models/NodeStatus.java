@@ -24,7 +24,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * Status of the node
+ * Status of the node. - draining: the node is bound to be shut down. It will not accept new sandboxes and will stop once all existing sandboxes are done. - standby: the node is not actively used, but it can return to ready and continue serving traffic. 
  */
 @JsonAdapter(NodeStatus.Adapter.class)
 public enum NodeStatus {
@@ -35,7 +35,9 @@ public enum NodeStatus {
   
   NodeStatusConnecting("connecting"),
   
-  NodeStatusUnhealthy("unhealthy");
+  NodeStatusUnhealthy("unhealthy"),
+  
+  NodeStatusStandby("standby");
 
   private String value;
 

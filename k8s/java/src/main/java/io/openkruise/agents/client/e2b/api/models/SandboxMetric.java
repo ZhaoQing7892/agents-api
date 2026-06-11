@@ -51,7 +51,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * Metric entry with timestamp and line
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class SandboxMetric {
   public static final String SERIALIZED_NAME_TIMESTAMP = "timestamp";
   @Deprecated
@@ -77,6 +77,10 @@ public class SandboxMetric {
   public static final String SERIALIZED_NAME_MEM_TOTAL = "memTotal";
   @SerializedName(SERIALIZED_NAME_MEM_TOTAL)
   private Long memTotal;
+
+  public static final String SERIALIZED_NAME_MEM_CACHE = "memCache";
+  @SerializedName(SERIALIZED_NAME_MEM_CACHE)
+  private Long memCache;
 
   public static final String SERIALIZED_NAME_DISK_USED = "diskUsed";
   @SerializedName(SERIALIZED_NAME_DISK_USED)
@@ -219,6 +223,27 @@ public class SandboxMetric {
   }
 
 
+  public SandboxMetric memCache(Long memCache) {
+    
+    this.memCache = memCache;
+    return this;
+  }
+
+   /**
+   * Cached memory (page cache) in bytes
+   * @return memCache
+  **/
+  @javax.annotation.Nonnull
+  public Long getMemCache() {
+    return memCache;
+  }
+
+
+  public void setMemCache(Long memCache) {
+    this.memCache = memCache;
+  }
+
+
   public SandboxMetric diskUsed(Long diskUsed) {
     
     this.diskUsed = diskUsed;
@@ -321,6 +346,7 @@ public class SandboxMetric {
         Objects.equals(this.cpuUsedPct, sandboxMetric.cpuUsedPct) &&
         Objects.equals(this.memUsed, sandboxMetric.memUsed) &&
         Objects.equals(this.memTotal, sandboxMetric.memTotal) &&
+        Objects.equals(this.memCache, sandboxMetric.memCache) &&
         Objects.equals(this.diskUsed, sandboxMetric.diskUsed) &&
         Objects.equals(this.diskTotal, sandboxMetric.diskTotal)&&
         Objects.equals(this.additionalProperties, sandboxMetric.additionalProperties);
@@ -328,7 +354,7 @@ public class SandboxMetric {
 
   @Override
   public int hashCode() {
-    return Objects.hash(timestamp, timestampUnix, cpuCount, cpuUsedPct, memUsed, memTotal, diskUsed, diskTotal, additionalProperties);
+    return Objects.hash(timestamp, timestampUnix, cpuCount, cpuUsedPct, memUsed, memTotal, memCache, diskUsed, diskTotal, additionalProperties);
   }
 
   @Override
@@ -341,6 +367,7 @@ public class SandboxMetric {
     sb.append("    cpuUsedPct: ").append(toIndentedString(cpuUsedPct)).append("\n");
     sb.append("    memUsed: ").append(toIndentedString(memUsed)).append("\n");
     sb.append("    memTotal: ").append(toIndentedString(memTotal)).append("\n");
+    sb.append("    memCache: ").append(toIndentedString(memCache)).append("\n");
     sb.append("    diskUsed: ").append(toIndentedString(diskUsed)).append("\n");
     sb.append("    diskTotal: ").append(toIndentedString(diskTotal)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
@@ -372,6 +399,7 @@ public class SandboxMetric {
     openapiFields.add("cpuUsedPct");
     openapiFields.add("memUsed");
     openapiFields.add("memTotal");
+    openapiFields.add("memCache");
     openapiFields.add("diskUsed");
     openapiFields.add("diskTotal");
 
@@ -383,6 +411,7 @@ public class SandboxMetric {
     openapiRequiredFields.add("cpuUsedPct");
     openapiRequiredFields.add("memUsed");
     openapiRequiredFields.add("memTotal");
+    openapiRequiredFields.add("memCache");
     openapiRequiredFields.add("diskUsed");
     openapiRequiredFields.add("diskTotal");
   }
@@ -426,7 +455,7 @@ public class SandboxMetric {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -449,7 +478,7 @@ public class SandboxMetric {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              SandboxMetric instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

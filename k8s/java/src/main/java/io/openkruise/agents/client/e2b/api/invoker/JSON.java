@@ -109,6 +109,7 @@ public class JSON {
         gsonBuilder.registerTypeAdapter(LocalDate.class, localDateTypeAdapter);
         gsonBuilder.registerTypeAdapter(byte[].class, byteArrayAdapter);
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.AWSRegistry.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.AdminBuildCancelResult.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.AdminSandboxKillResult.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.AssignTemplateTagsRequest.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.AssignedTemplateTags.CustomTypeAdapterFactory());
@@ -137,15 +138,19 @@ public class JSON {
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.NodeStatusChange.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.NodesGet200ResponseInner.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.ResumedSandbox.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.Sandbox.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxAutoResumeConfig.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxDetail.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxLifecycle.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxLog.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxLogEntry.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxLogs.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxLogsV2Response.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxMetric.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxNetworkConfig.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxNetworkRule.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxNetworkTransform.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxNetworkUpdateConfig.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxResponse.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxVolumeMount.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxesGet200ResponseInner.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.SandboxesSandboxIDRefreshesPostRequest.CustomTypeAdapterFactory());
@@ -178,6 +183,8 @@ public class JSON {
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.TemplatesGet200ResponseInner.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.UpdateTeamAPIKey.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.Volume.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.VolumeAndToken.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new io.openkruise.agents.client.e2b.api.models.VolumeToken.CustomTypeAdapterFactory());
         gson = gsonBuilder.create();
     }
 
