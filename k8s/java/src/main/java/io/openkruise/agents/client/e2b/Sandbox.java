@@ -16,9 +16,9 @@ public class Sandbox implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(Sandbox.class.getName());
 
     /** Command execution within the sandbox */
-    public final Commands Commands;
+    public final Commands commands;
     /** File operations within the sandbox */
-    public final Filesystem Files;
+    public final Filesystem files;
 
     private final String sandboxID;
     private final ConnectionConfig config;
@@ -32,8 +32,8 @@ public class Sandbox implements AutoCloseable {
 
         E2bRuntimeConfig runtimeConfig = E2bRuntimeConfig.fromConnectionConfig(config, envdAccessToken);
         this.runtimeClient = RuntimeClient.create(sandboxID, runtimeConfig);
-        this.Commands = runtimeClient.Commands;
-        this.Files = runtimeClient.Files;
+        this.commands = runtimeClient.commands;
+        this.files = runtimeClient.files;
     }
 
     public String getSandboxID() {
@@ -60,7 +60,7 @@ public class Sandbox implements AutoCloseable {
         }
         try {
             sandboxApi.kill(sandboxID);
-        } catch (ApiException e) {
+        } catch (Exception e) {
             LOG.log(Level.WARNING, "Failed to kill sandbox " + sandboxID + " on close()", e);
         }
     }

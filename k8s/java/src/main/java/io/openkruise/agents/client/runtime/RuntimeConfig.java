@@ -86,11 +86,15 @@ public class RuntimeConfig {
     private volatile OkHttpClient sharedHttpClient;
     private volatile OkHttpClient sharedStreamingClient;
     private final Object httpClientLock = new Object();
+    private volatile boolean shutdown;
 
     /**
      * Shared OkHttpClient with double-checked locking lazy initialization, reused by all RuntimeClients.
      */
     public OkHttpClient getOrCreateHttpClient() {
+        if (shutdown) {
+            throw new IllegalStateException("RuntimeConfig has been shut down");
+        }
         if (sharedHttpClient == null) {
             synchronized (httpClientLock) {
                 if (sharedHttpClient == null) {
@@ -109,6 +113,9 @@ public class RuntimeConfig {
      * Shared streaming OkHttpClient (no read timeout), reused by all RuntimeClients.
      */
     public OkHttpClient getOrCreateStreamingHttpClient() {
+        if (shutdown) {
+            throw new IllegalStateException("RuntimeConfig has been shut down");
+        }
         if (sharedStreamingClient == null) {
             synchronized (httpClientLock) {
                 if (sharedStreamingClient == null) {
@@ -121,6 +128,24 @@ public class RuntimeConfig {
             }
         }
         return sharedStreamingClient;
+    }
+
+    /**
+     * Shuts down the shared OkHttpClient thread pools (Dispatcher and ConnectionPool).
+     * Should be called when all RuntimeClients using this config are no longer needed.
+     */
+    public void shutdown() {
+        synchronized (httpClientLock) {
+            shutdown = true;
+            if (sharedHttpClient != null) {
+                sharedHttpClient.dispatcher().executorService().shutdown();
+                sharedHttpClient.connectionPool().evictAll();
+            }
+            if (sharedStreamingClient != null) {
+                sharedStreamingClient.dispatcher().executorService().shutdown();
+                sharedStreamingClient.connectionPool().evictAll();
+            }
+        }
     }
 
     /**

@@ -2,9 +2,6 @@ package io.openkruise.agents.client.e2b;
 
 import io.openkruise.agents.client.e2b.api.invoker.ApiException;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Thrown when the specified sandbox does not exist (HTTP 404).
  */

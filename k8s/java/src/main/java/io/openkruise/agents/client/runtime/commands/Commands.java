@@ -6,6 +6,7 @@ import io.openkruise.agents.client.runtime.RuntimeConfig;
 import io.openkruise.agents.client.runtime.envd.process.*;
 import io.openkruise.agents.client.runtime.exceptions.SandboxException;
 import io.openkruise.agents.client.runtime.utils.ConnectStreamReader;
+import io.openkruise.agents.client.runtime.utils.MessageStream;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -46,19 +47,15 @@ public class Commands {
     }
 
     public List<ProcessInfo> list() {
-        try {
-            ListRequest params = ListRequest.newBuilder().build();
+        ListRequest params = ListRequest.newBuilder().build();
+        Request request = config.buildHttpRequest(EnvdMethods.PROCESS_SERVICE, EnvdMethods.PROCESS_LIST, params, sandboxID);
 
-            Request request = config.buildHttpRequest(EnvdMethods.PROCESS_SERVICE, EnvdMethods.PROCESS_LIST, params, sandboxID);
-
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("List HTTP request failed: " + response.code() + " " + response.message());
             }
 
             Reader reader = response.body().charStream();
-            // Parse the JSON response back to protobuf
             ListResponse.Builder builder = ListResponse.newBuilder();
             PROTO_PARSER.merge(reader, builder);
             ListResponse listResponse = builder.build();
@@ -137,11 +134,13 @@ public class Commands {
         try {
             // noinspection WithSSRFCheckingInspection
             response = streamingClient.newCall(httpRequest).execute();
-            if (!response.isSuccessful()) {
-                throw new IOException("Start HTTP request failed: " + response.code() + " " + response.message());
-            }
         } catch (IOException e) {
             throw new SandboxException("Failed to start process", e);
+        }
+        if (!response.isSuccessful()) {
+            String msg = "Start HTTP request failed: " + response.code() + " " + response.message();
+            response.close();
+            throw new SandboxException(msg);
         }
 
         // Parse Connect Protocol frames from response stream
@@ -152,6 +151,7 @@ public class Commands {
         if (!streamReader.hasNext()) {
             String trailerError = streamReader.getTrailerError();
             streamReader.close();
+            response.close();
             if (trailerError != null) {
                 throw new SandboxException("Failed to start process: " + trailerError);
             }
@@ -161,16 +161,18 @@ public class Commands {
         StartResponse firstEvent = streamReader.next();
         if (!firstEvent.hasEvent() || !firstEvent.getEvent().hasStart()) {
             streamReader.close();
+            response.close();
             throw new SandboxException("Failed to start process: invalid response from server");
         }
 
         long pid = firstEvent.getEvent().getStart().getPid();
         if (pid <= 0) {
             streamReader.close();
+            response.close();
             throw new SandboxException("Failed to start process: invalid PID received");
         }
 
-        return new CommandHandle(pid, streamReader, () -> kill((int) pid),
+        return new CommandHandle(pid, streamReader, response, () -> kill((int) pid),
             options.getOnStdout(), options.getOnStderr());
     }
 
@@ -190,10 +192,10 @@ public class Commands {
         try {
             Request request = config.buildHttpRequest(EnvdMethods.PROCESS_SERVICE, EnvdMethods.PROCESS_SEND_INPUT, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                throw new IOException("SendInput HTTP request failed: " + response.code() + " " + response.message());
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("SendInput HTTP request failed: " + response.code() + " " + response.message());
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to send input", e);
@@ -215,15 +217,15 @@ public class Commands {
         try {
             Request request = config.buildHttpRequest(EnvdMethods.PROCESS_SERVICE, EnvdMethods.PROCESS_SEND_SIGNAL, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
-            if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                return false;
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                    return false;
+                }
+                if (!response.isSuccessful()) {
+                    throw new IOException("SendSignal HTTP request failed: " + response.code() + " " + response.message());
+                }
+                return response.isSuccessful();
             }
-            if (!response.isSuccessful()) {
-                throw new IOException("SendInput HTTP request failed: " + response.code() + " " + response.message());
-            }
-            return response.isSuccessful();
         } catch (Exception e) {
             throw new RuntimeException("Failed to send kill", e);
         }
@@ -238,10 +240,10 @@ public class Commands {
         try {
             Request request = config.buildHttpRequest(EnvdMethods.PROCESS_SERVICE, EnvdMethods.PROCESS_CLOSE_STDIN, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                throw new IOException("CloseStdin HTTP request failed: " + response.code() + " " + response.message());
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("CloseStdin HTTP request failed: " + response.code() + " " + response.message());
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to closeStdin", e);
@@ -261,11 +263,13 @@ public class Commands {
         try {
             // noinspection WithSSRFCheckingInspection
             response = streamingClient.newCall(httpRequest).execute();
-            if (!response.isSuccessful()) {
-                throw new IOException("Connect HTTP request failed: " + response.code() + " " + response.message());
-            }
         } catch (IOException e) {
             throw new SandboxException("Failed to connect to process", e);
+        }
+        if (!response.isSuccessful()) {
+            String msg = "Connect HTTP request failed: " + response.code() + " " + response.message();
+            response.close();
+            throw new SandboxException(msg);
         }
 
         // Parse Connect Protocol frames from response stream
@@ -276,33 +280,37 @@ public class Commands {
 
         if (!connectReader.hasNext()) {
             connectReader.close();
+            response.close();
             throw new SandboxException("Failed to connect to process: no response from server");
         }
 
         ConnectResponse firstResponse = connectReader.next();
         if (!firstResponse.hasEvent()) {
             connectReader.close();
+            response.close();
             throw new SandboxException("Failed to connect to process: invalid response from server");
         }
 
         ProcessEvent event = firstResponse.getEvent();
         if (!event.hasStart()) {
             connectReader.close();
+            response.close();
             throw new SandboxException("Failed to connect to process: expected start event");
         }
 
         long connectedPid = event.getStart().getPid();
         if (connectedPid != pid) {
             connectReader.close();
+            response.close();
             throw new SandboxException(
                 "Failed to connect to process: PID mismatch, expected " + pid + " but got " + connectedPid);
         }
 
         // Adapt ConnectResponse stream to StartResponse stream
-        ConnectStreamReader<StartResponse> adaptedReader =
-            new ConnectResponseAdapter(connectReader);
+        MessageStream<StartResponse> adaptedReader =
+            new ConnectResponseAdapter(connectReader, response);
 
-        return new CommandHandle(pid, adaptedReader, () -> kill(pid), null, null);
+        return new CommandHandle(pid, adaptedReader, response, () -> kill(pid), null, null);
     }
 
     private void validatePid(int pid) {
@@ -314,12 +322,13 @@ public class Commands {
     /**
      * Adapter that adapts ConnectResponse stream to StartResponse stream.
      */
-    private static class ConnectResponseAdapter extends ConnectStreamReader<StartResponse> {
+    private static class ConnectResponseAdapter implements MessageStream<StartResponse> {
         private final ConnectStreamReader<ConnectResponse> delegate;
+        private final Response response;
 
-        ConnectResponseAdapter(ConnectStreamReader<ConnectResponse> delegate) {
-            super(new java.io.ByteArrayInputStream(new byte[0]), StartResponse.parser());
+        ConnectResponseAdapter(ConnectStreamReader<ConnectResponse> delegate, Response response) {
             this.delegate = delegate;
+            this.response = response;
         }
 
         @Override
@@ -329,18 +338,21 @@ public class Commands {
 
         @Override
         public StartResponse next() {
-            ConnectResponse response = delegate.next();
-            if (!response.hasEvent()) {
+            ConnectResponse connResponse = delegate.next();
+            if (!connResponse.hasEvent()) {
                 return StartResponse.getDefaultInstance();
             }
             return StartResponse.newBuilder()
-                .setEvent(response.getEvent())
+                .setEvent(connResponse.getEvent())
                 .build();
         }
 
         @Override
         public void close() {
             delegate.close();
+            if (response != null) {
+                response.close();
+            }
         }
     }
 

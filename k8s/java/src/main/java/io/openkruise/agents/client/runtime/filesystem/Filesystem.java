@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Filesystem provides filesystem operation functionality within the sandbox.
@@ -27,6 +29,7 @@ import java.util.function.Consumer;
  * All implemented based on OkHttp + Connect Protocol, without depending on gRPC.
  */
 public class Filesystem {
+    private static final Logger LOG = Logger.getLogger(Filesystem.class.getName());
     private static final JsonFormat.Parser PROTO_PARSER = JsonFormat.parser().ignoringUnknownFields();
     private final String sandboxID;
     private final RuntimeConfig config;
@@ -68,19 +71,15 @@ public class Filesystem {
             throw new IllegalArgumentException("Depth must be at least 1");
         }
 
-        try {
-            ListDirRequest params = ListDirRequest.newBuilder().setPath(path).setDepth(depth).build();
+        ListDirRequest params = ListDirRequest.newBuilder().setPath(path).setDepth(depth).build();
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_LIST_DIR, params, sandboxID);
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_LIST_DIR, params, sandboxID);
-
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("ListDir HTTP request failed: " + response.code() + " " + response.message());
             }
 
             Reader reader = response.body().charStream();
-            // Parse the JSON response back to protobuf
             ListDirResponse.Builder builder = ListDirResponse.newBuilder();
             PROTO_PARSER.merge(reader, builder);
             ListDirResponse listDirResponse = builder.build();
@@ -103,15 +102,13 @@ public class Filesystem {
      * @return true if the directory was created, false if it already exists
      */
     public boolean makeDir(String path) {
-        try {
-            MakeDirRequest params = MakeDirRequest.newBuilder()
-                .setPath(path)
-                .build();
+        MakeDirRequest params = MakeDirRequest.newBuilder()
+            .setPath(path)
+            .build();
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_MAKE_DIR, params, sandboxID);
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_MAKE_DIR, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("MakeDir HTTP request failed: " + response.code() + " " + response.message());
             }
@@ -129,20 +126,17 @@ public class Filesystem {
      * @return information about renamed file or directory
      */
     public boolean move(String oldPath, String newPath) {
-        try {
-            MoveRequest params = MoveRequest.newBuilder()
-                .setSource(oldPath)
-                .setDestination(newPath)
-                .build();
+        MoveRequest params = MoveRequest.newBuilder()
+            .setSource(oldPath)
+            .setDestination(newPath)
+            .build();
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_MOVE, params, sandboxID);
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_MOVE, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Move HTTP request failed: " + response.code() + " " + response.message());
             }
-
             return response.isSuccessful();
         } catch (Exception e) {
             throw new RuntimeException("Failed to move", e);
@@ -155,15 +149,13 @@ public class Filesystem {
      * @param path path to a file or directory
      */
     public boolean remove(String path) {
-        try {
-            RemoveRequest params = RemoveRequest.newBuilder()
-                .setPath(path)
-                .build();
+        RemoveRequest params = RemoveRequest.newBuilder()
+            .setPath(path)
+            .build();
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_REMOVE, params, sandboxID);
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_REMOVE, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Remove HTTP request failed: " + response.code() + " " + response.message());
             }
@@ -180,15 +172,13 @@ public class Filesystem {
      * @return true if the file or directory exists, false otherwise
      */
     public boolean exists(String path) {
-        try {
-            StatRequest params = StatRequest.newBuilder()
-                .setPath(path)
-                .build();
+        StatRequest params = StatRequest.newBuilder()
+            .setPath(path)
+            .build();
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_STAT, params, sandboxID);
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_STAT, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 return false;
             }
@@ -197,7 +187,7 @@ public class Filesystem {
             }
             return response.isSuccessful();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to exists", e);
+            throw new RuntimeException("Failed to check if file exists: " + path, e);
         }
     }
 
@@ -208,28 +198,25 @@ public class Filesystem {
      * @return information about the file or directory
      */
     public EntryInfo getInfo(String path) {
-        try {
-            StatRequest params = StatRequest.newBuilder()
-                .setPath(path)
-                .build();
+        StatRequest params = StatRequest.newBuilder()
+            .setPath(path)
+            .build();
 
-            Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_STAT, params, sandboxID);
+        Request request = config.buildHttpRequest(EnvdMethods.FILESYSTEM_SERVICE, EnvdMethods.FS_STAT, params, sandboxID);
 
-            // noinspection WithSSRFCheckingInspection
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Stat HTTP request failed: " + response.code() + " " + response.message());
             }
 
             Reader reader = response.body().charStream();
-            // Parse the JSON response back to protobuf
             StatResponse.Builder builder = StatResponse.newBuilder();
             PROTO_PARSER.merge(reader, builder);
             StatResponse statResponse = builder.build();
 
             return toEntryInfo(statResponse.getEntry());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to Remove", e);
+            throw new RuntimeException("Failed to get file info: " + path, e);
         }
     }
 
@@ -268,8 +255,7 @@ public class Filesystem {
             .build();
         request = addSandboxHeaders(request);
 
-        try {
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 throw new RuntimeException("File not found: " + path);
             }
@@ -352,8 +338,7 @@ public class Filesystem {
             .build();
         request = addSandboxHeaders(request);
 
-        try {
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (response.code() != HttpURLConnection.HTTP_OK
                 && response.code() != HttpURLConnection.HTTP_CREATED) {
                 String body = response.body() != null ? response.body().string() : "";
@@ -371,8 +356,8 @@ public class Filesystem {
                             obj.has("path") ? obj.get("path").getAsString() : path,
                             obj.has("type") ? obj.get("type").getAsString() : "file");
                     }
-                } catch (Exception ignored) {
-                    // Return basic info if parsing fails
+                } catch (Exception e) {
+                    LOG.log(Level.FINE, "Failed to parse write response for " + path + ", falling back to basic info", e);
                 }
             }
             return new WriteInfo(path, "file");
@@ -434,11 +419,13 @@ public class Filesystem {
         try {
             // noinspection WithSSRFCheckingInspection
             response = streamingClient.newCall(httpRequest).execute();
-            if (!response.isSuccessful()) {
-                throw new IOException("WatchDir HTTP request failed: " + response.code() + " " + response.message());
-            }
         } catch (IOException e) {
             throw new SandboxException("Failed to watch directory", e);
+        }
+        if (!response.isSuccessful()) {
+            String msg = "WatchDir HTTP request failed: " + response.code() + " " + response.message();
+            response.close();
+            throw new SandboxException(msg);
         }
 
         InputStream responseStream = response.body().byteStream();
@@ -463,7 +450,7 @@ public class Filesystem {
                     // Ignore start and keepalive events
                 }
             } catch (Exception e) {
-                // stream closed or error
+                LOG.log(Level.WARNING, "Watch directory stream error for path: " + path, e);
             } finally {
                 streamReader.close();
             }
@@ -471,7 +458,7 @@ public class Filesystem {
         watchThread.setDaemon(true);
         watchThread.start();
 
-        return new WatchHandle(streamReader);
+        return new WatchHandle(streamReader, response);
     }
 
     private WatchHandle.FilesystemEventType mapEventType(EventType eventType) {

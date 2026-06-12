@@ -39,7 +39,7 @@ public class SandboxFilesExample {
 
             // ========== 4. File operations demo ==========
             System.out.println("\n--- File Operations Demo ---");
-            demonstrateFileOperations(sandbox.Files);
+            demonstrateFileOperations(sandbox.files);
 
             System.out.println("\n========== Example Completed ==========");
         } catch (Exception e) {

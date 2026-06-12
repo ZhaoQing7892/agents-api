@@ -42,7 +42,7 @@ public class SandboxCommandsExample {
 
             // ========== 4. Command operations demo ==========
             System.out.println("\n--- Command Operations Demo ---");
-            demonstrateCommandOperations(sandbox.Commands);
+            demonstrateCommandOperations(sandbox.commands);
 
             System.out.println("\n========== Example Completed ==========");
         } catch (Exception e) {

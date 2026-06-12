@@ -7,162 +7,146 @@ import io.openkruise.agents.client.e2b.api.models.SandboxVolumeMount;
 import io.openkruise.agents.client.e2b.api.models.SandboxesGet200ResponseInner;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Sandbox information, used uniformly for list() and getInfo() return values.
+ * Immutable sandbox information, used uniformly for list() and getInfo() return values.
  * Fields unique to detail are null when returned by list().
  */
 public class SandboxInfo {
 
-    private String sandboxID;
-    private String templateID;
-    private String alias;
-    private String clientID;
-    private OffsetDateTime startedAt;
-    private OffsetDateTime endAt;
-    private Integer cpuCount;
-    private Integer memoryMB;
-    private Integer diskSizeMB;
-    private String envdVersion;
-    private Map<String, String> metadata;
-    private String state;
-    private List<SandboxVolumeMount> volumeMounts;
+    private final String sandboxID;
+    private final String templateID;
+    private final String alias;
+    private final String clientID;
+    private final OffsetDateTime startedAt;
+    private final OffsetDateTime endAt;
+    private final Integer cpuCount;
+    private final Integer memoryMB;
+    private final Integer diskSizeMB;
+    private final String envdVersion;
+    private final Map<String, String> metadata;
+    private final String state;
+    private final List<SandboxVolumeMount> volumeMounts;
 
-    private String envdAccessToken;
-    private String domain;
-    private Boolean allowInternetAccess;
-    private SandboxNetworkConfig network;
-    private SandboxLifecycle lifecycle;
+    private final String envdAccessToken;
+    private final String domain;
+    private final Boolean allowInternetAccess;
+    private final SandboxNetworkConfig network;
+    private final SandboxLifecycle lifecycle;
 
-    public SandboxInfo() {
+    private SandboxInfo(Builder builder) {
+        this.sandboxID = builder.sandboxID;
+        this.templateID = builder.templateID;
+        this.alias = builder.alias;
+        this.clientID = builder.clientID;
+        this.startedAt = builder.startedAt;
+        this.endAt = builder.endAt;
+        this.cpuCount = builder.cpuCount;
+        this.memoryMB = builder.memoryMB;
+        this.diskSizeMB = builder.diskSizeMB;
+        this.envdVersion = builder.envdVersion;
+        this.state = builder.state;
+        this.metadata = builder.metadata != null
+            ? Collections.unmodifiableMap(new HashMap<>(builder.metadata)) : null;
+        this.volumeMounts = builder.volumeMounts != null
+            ? Collections.unmodifiableList(new ArrayList<>(builder.volumeMounts)) : null;
+        this.envdAccessToken = builder.envdAccessToken;
+        this.domain = builder.domain;
+        this.allowInternetAccess = builder.allowInternetAccess;
+        this.network = builder.network;
+        this.lifecycle = builder.lifecycle;
     }
 
     static SandboxInfo fromListResponse(SandboxesGet200ResponseInner sb) {
-        return fillCommon(new SandboxInfo(),
-            sb.getSandboxID(), sb.getTemplateID(), sb.getAlias(), sb.getClientID(),
-            sb.getStartedAt(), sb.getEndAt(), sb.getCpuCount(), sb.getMemoryMB(),
-            sb.getDiskSizeMB(), sb.getEnvdVersion(),
-            sb.getState() != null ? sb.getState().getValue() : null,
-            sb.getMetadata(), sb.getVolumeMounts());
+        return new Builder()
+            .sandboxID(sb.getSandboxID())
+            .templateID(sb.getTemplateID())
+            .alias(sb.getAlias())
+            .clientID(sb.getClientID())
+            .startedAt(sb.getStartedAt())
+            .endAt(sb.getEndAt())
+            .cpuCount(sb.getCpuCount())
+            .memoryMB(sb.getMemoryMB())
+            .diskSizeMB(sb.getDiskSizeMB())
+            .envdVersion(sb.getEnvdVersion())
+            .state(sb.getState() != null ? sb.getState().getValue() : null)
+            .metadata(sb.getMetadata())
+            .volumeMounts(sb.getVolumeMounts())
+            .build();
     }
 
     static SandboxInfo fromDetail(SandboxDetail resp) {
-        SandboxInfo info = fillCommon(new SandboxInfo(),
-            resp.getSandboxID(), resp.getTemplateID(), resp.getAlias(), resp.getClientID(),
-            resp.getStartedAt(), resp.getEndAt(), resp.getCpuCount(), resp.getMemoryMB(),
-            resp.getDiskSizeMB(), resp.getEnvdVersion(),
-            resp.getState() != null ? resp.getState().getValue() : null,
-            resp.getMetadata(), resp.getVolumeMounts());
-        info.envdAccessToken = resp.getEnvdAccessToken();
-        info.domain = resp.getDomain();
-        info.allowInternetAccess = resp.getAllowInternetAccess();
-        info.network = resp.getNetwork();
-        info.lifecycle = resp.getLifecycle();
-        return info;
+        return new Builder()
+            .sandboxID(resp.getSandboxID())
+            .templateID(resp.getTemplateID())
+            .alias(resp.getAlias())
+            .clientID(resp.getClientID())
+            .startedAt(resp.getStartedAt())
+            .endAt(resp.getEndAt())
+            .cpuCount(resp.getCpuCount())
+            .memoryMB(resp.getMemoryMB())
+            .diskSizeMB(resp.getDiskSizeMB())
+            .envdVersion(resp.getEnvdVersion())
+            .state(resp.getState() != null ? resp.getState().getValue() : null)
+            .metadata(resp.getMetadata())
+            .volumeMounts(resp.getVolumeMounts())
+            .envdAccessToken(resp.getEnvdAccessToken())
+            .domain(resp.getDomain())
+            .allowInternetAccess(resp.getAllowInternetAccess())
+            .network(resp.getNetwork())
+            .lifecycle(resp.getLifecycle())
+            .build();
     }
 
-    private static SandboxInfo fillCommon(SandboxInfo info,
-        String sandboxID, String templateID, String alias, String clientID,
-        OffsetDateTime startedAt, OffsetDateTime endAt,
-        Integer cpuCount, Integer memoryMB, Integer diskSizeMB,
-        String envdVersion, String state,
-        Map<String, String> metadata, List<SandboxVolumeMount> volumeMounts) {
-        info.sandboxID = sandboxID;
-        info.templateID = templateID;
-        info.alias = alias;
-        info.clientID = clientID;
-        info.startedAt = startedAt;
-        info.endAt = endAt;
-        info.cpuCount = cpuCount;
-        info.memoryMB = memoryMB;
-        info.diskSizeMB = diskSizeMB;
-        info.envdVersion = envdVersion;
-        info.state = state;
-        info.metadata = metadata;
-        info.volumeMounts = volumeMounts;
-        return info;
-    }
+    // Getters only — no setters, immutable by design
 
-    public String getSandboxID() {return sandboxID;}
+    public String getSandboxID() { return sandboxID; }
 
-    public void setSandboxID(String sandboxID) {this.sandboxID = sandboxID;}
+    public String getTemplateID() { return templateID; }
 
-    public String getTemplateID() {return templateID;}
+    public String getAlias() { return alias; }
 
-    public void setTemplateID(String templateID) {this.templateID = templateID;}
+    public String getClientID() { return clientID; }
 
-    public String getAlias() {return alias;}
+    public OffsetDateTime getStartedAt() { return startedAt; }
 
-    public void setAlias(String alias) {this.alias = alias;}
+    public OffsetDateTime getEndAt() { return endAt; }
 
-    public String getClientID() {return clientID;}
+    public Integer getCpuCount() { return cpuCount; }
 
-    public void setClientID(String clientID) {this.clientID = clientID;}
+    public Integer getMemoryMB() { return memoryMB; }
 
-    public OffsetDateTime getStartedAt() {return startedAt;}
+    public Integer getDiskSizeMB() { return diskSizeMB; }
 
-    public void setStartedAt(OffsetDateTime startedAt) {this.startedAt = startedAt;}
+    public String getEnvdVersion() { return envdVersion; }
 
-    public OffsetDateTime getEndAt() {return endAt;}
+    public Map<String, String> getMetadata() { return metadata; }
 
-    public void setEndAt(OffsetDateTime endAt) {this.endAt = endAt;}
+    public String getState() { return state; }
 
-    public Integer getCpuCount() {return cpuCount;}
+    public List<SandboxVolumeMount> getVolumeMounts() { return volumeMounts; }
 
-    public void setCpuCount(Integer cpuCount) {this.cpuCount = cpuCount;}
+    public String getEnvdAccessToken() { return envdAccessToken; }
 
-    public Integer getMemoryMB() {return memoryMB;}
+    public String getDomain() { return domain; }
 
-    public void setMemoryMB(Integer memoryMB) {this.memoryMB = memoryMB;}
+    public Boolean getAllowInternetAccess() { return allowInternetAccess; }
 
-    public Integer getDiskSizeMB() {return diskSizeMB;}
+    public SandboxNetworkConfig getNetwork() { return network; }
 
-    public void setDiskSizeMB(Integer diskSizeMB) {this.diskSizeMB = diskSizeMB;}
-
-    public String getEnvdVersion() {return envdVersion;}
-
-    public void setEnvdVersion(String envdVersion) {this.envdVersion = envdVersion;}
-
-    public Map<String, String> getMetadata() {return metadata;}
-
-    public void setMetadata(Map<String, String> metadata) {this.metadata = metadata;}
-
-    public String getState() {return state;}
-
-    public void setState(String state) {this.state = state;}
-
-    public List<SandboxVolumeMount> getVolumeMounts() {return volumeMounts;}
-
-    public void setVolumeMounts(List<SandboxVolumeMount> volumeMounts) {this.volumeMounts = volumeMounts;}
-
-    public String getEnvdAccessToken() {return envdAccessToken;}
-
-    public void setEnvdAccessToken(String envdAccessToken) {this.envdAccessToken = envdAccessToken;}
-
-    public String getDomain() {return domain;}
-
-    public void setDomain(String domain) {this.domain = domain;}
-
-    public Boolean getAllowInternetAccess() {return allowInternetAccess;}
-
-    public void setAllowInternetAccess(Boolean allowInternetAccess) {this.allowInternetAccess = allowInternetAccess;}
-
-    public SandboxNetworkConfig getNetwork() {return network;}
-
-    public void setNetwork(SandboxNetworkConfig network) {this.network = network;}
-
-    public SandboxLifecycle getLifecycle() {return lifecycle;}
-
-    public void setLifecycle(SandboxLifecycle lifecycle) {this.lifecycle = lifecycle;}
+    public SandboxLifecycle getLifecycle() { return lifecycle; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (o == null || getClass() != o.getClass()) {return false;}
-        SandboxInfo that = (SandboxInfo)o;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        SandboxInfo that = (SandboxInfo) o;
         return Objects.equals(sandboxID, that.sandboxID);
     }
 
@@ -182,5 +166,123 @@ public class SandboxInfo {
             ", memoryMB=" + memoryMB +
             ", diskSizeMB=" + diskSizeMB +
             '}';
+    }
+
+    /**
+     * Builder for constructing SandboxInfo instances.
+     */
+    public static class Builder {
+        private String sandboxID;
+        private String templateID;
+        private String alias;
+        private String clientID;
+        private OffsetDateTime startedAt;
+        private OffsetDateTime endAt;
+        private Integer cpuCount;
+        private Integer memoryMB;
+        private Integer diskSizeMB;
+        private String envdVersion;
+        private Map<String, String> metadata;
+        private String state;
+        private List<SandboxVolumeMount> volumeMounts;
+        private String envdAccessToken;
+        private String domain;
+        private Boolean allowInternetAccess;
+        private SandboxNetworkConfig network;
+        private SandboxLifecycle lifecycle;
+
+        public Builder sandboxID(String sandboxID) {
+            this.sandboxID = sandboxID;
+            return this;
+        }
+
+        public Builder templateID(String templateID) {
+            this.templateID = templateID;
+            return this;
+        }
+
+        public Builder alias(String alias) {
+            this.alias = alias;
+            return this;
+        }
+
+        public Builder clientID(String clientID) {
+            this.clientID = clientID;
+            return this;
+        }
+
+        public Builder startedAt(OffsetDateTime startedAt) {
+            this.startedAt = startedAt;
+            return this;
+        }
+
+        public Builder endAt(OffsetDateTime endAt) {
+            this.endAt = endAt;
+            return this;
+        }
+
+        public Builder cpuCount(Integer cpuCount) {
+            this.cpuCount = cpuCount;
+            return this;
+        }
+
+        public Builder memoryMB(Integer memoryMB) {
+            this.memoryMB = memoryMB;
+            return this;
+        }
+
+        public Builder diskSizeMB(Integer diskSizeMB) {
+            this.diskSizeMB = diskSizeMB;
+            return this;
+        }
+
+        public Builder envdVersion(String envdVersion) {
+            this.envdVersion = envdVersion;
+            return this;
+        }
+
+        public Builder state(String state) {
+            this.state = state;
+            return this;
+        }
+
+        public Builder metadata(Map<String, String> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder volumeMounts(List<SandboxVolumeMount> volumeMounts) {
+            this.volumeMounts = volumeMounts;
+            return this;
+        }
+
+        public Builder envdAccessToken(String envdAccessToken) {
+            this.envdAccessToken = envdAccessToken;
+            return this;
+        }
+
+        public Builder domain(String domain) {
+            this.domain = domain;
+            return this;
+        }
+
+        public Builder allowInternetAccess(Boolean allowInternetAccess) {
+            this.allowInternetAccess = allowInternetAccess;
+            return this;
+        }
+
+        public Builder network(SandboxNetworkConfig network) {
+            this.network = network;
+            return this;
+        }
+
+        public Builder lifecycle(SandboxLifecycle lifecycle) {
+            this.lifecycle = lifecycle;
+            return this;
+        }
+
+        public SandboxInfo build() {
+            return new SandboxInfo(this);
+        }
     }
 }

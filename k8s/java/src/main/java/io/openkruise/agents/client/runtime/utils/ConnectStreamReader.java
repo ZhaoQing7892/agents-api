@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> protobuf message type
  */
-public class ConnectStreamReader<T extends Message> implements Iterator<T>, Closeable {
+public class ConnectStreamReader<T extends Message> implements Iterator<T>, MessageStream<T> {
     private static final int FLAG_TRAILER = 0x02;
     private static final int HEADER_SIZE = 5;
     private static final int MAX_FRAME_SIZE = 32 * 1024 * 1024;

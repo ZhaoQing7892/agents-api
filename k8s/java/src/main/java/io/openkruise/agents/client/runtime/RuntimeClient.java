@@ -1,17 +1,19 @@
 package io.openkruise.agents.client.runtime;
 
 import io.openkruise.agents.client.runtime.commands.Commands;
+import io.openkruise.agents.client.runtime.exceptions.K8sOperationException;
 import io.openkruise.agents.client.runtime.filesystem.Filesystem;
 import okhttp3.OkHttpClient;
 
 import java.util.Objects;
 
 /**
- * Unified entry point for the Runtime layer, providing command execution and file operations based on OkHttp + Connect Protocol.
+ * Unified entry point for the Runtime layer, providing command execution and file operations based on OkHttp + Connect
+ * Protocol.
  */
 public class RuntimeClient implements AutoCloseable {
-    public final Commands Commands;
-    public final Filesystem Files;
+    public final Commands commands;
+    public final Filesystem files;
 
     private final String sandboxID;
     private final RuntimeConfig config;
@@ -23,8 +25,8 @@ public class RuntimeClient implements AutoCloseable {
         this.config = Objects.requireNonNull(config, "config cannot be null");
         this.runtimeURL = config.getSandboxURL(sandboxID);
 
-        this.Commands = new Commands(sandboxID, config, httpClient, streamingClient);
-        this.Files = new Filesystem(sandboxID, config, httpClient, streamingClient);
+        this.commands = new Commands(sandboxID, config, httpClient, streamingClient);
+        this.files = new Filesystem(sandboxID, config, httpClient, streamingClient);
     }
 
     public static RuntimeClient create(String sandboxID, RuntimeConfig config) {
@@ -37,7 +39,7 @@ public class RuntimeClient implements AutoCloseable {
      * Automatically builds by querying Sandbox CR via K8s, extracting runtimeToken from annotations.
      */
     public static RuntimeClient newFromK8s(String namespace, String sandboxName, RuntimeConfig config)
-        throws Exception {
+        throws K8sOperationException {
         String sandboxID = namespace + "--" + sandboxName;
 
         String runtimeToken = K8sHelper.getRuntimeToken(namespace, sandboxName);
@@ -73,6 +75,7 @@ public class RuntimeClient implements AutoCloseable {
 
     @Override
     public void close() {
+        config.shutdown();
     }
 
     @Override

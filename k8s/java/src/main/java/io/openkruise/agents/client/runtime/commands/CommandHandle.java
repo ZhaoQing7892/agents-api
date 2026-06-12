@@ -3,7 +3,8 @@ package io.openkruise.agents.client.runtime.commands;
 import io.openkruise.agents.client.runtime.envd.process.StartResponse;
 import io.openkruise.agents.client.runtime.envd.process.ProcessEvent;
 import io.openkruise.agents.client.runtime.exceptions.SandboxException;
-import io.openkruise.agents.client.runtime.utils.ConnectStreamReader;
+import io.openkruise.agents.client.runtime.utils.MessageStream;
+import okhttp3.Response;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +18,8 @@ import java.util.function.Consumer;
  */
 public class CommandHandle implements AutoCloseable {
     private final long pid;
-    private final ConnectStreamReader<StartResponse> streamReader;
+    private final MessageStream<StartResponse> streamReader;
+    private final Response streamingResponse;
     private final Runnable killAction;
     private final StringBuilder stdout = new StringBuilder();
     private final StringBuilder stderr = new StringBuilder();
@@ -29,13 +31,15 @@ public class CommandHandle implements AutoCloseable {
     private final Consumer<String> onStderr;
 
     /**
-     * @param pid          Process PID
-     * @param streamReader Connect Protocol streaming reader
-     * @param killAction   Callback to terminate the command (calls Commands.kill)
-     * @param onStdout     stdout callback
-     * @param onStderr     stderr callback
+     * @param pid               Process PID
+     * @param streamReader      Message stream reader (ConnectStreamReader or adapter)
+     * @param streamingResponse OkHttp Response to close when handle is closed
+     * @param killAction        Callback to terminate the command (calls Commands.kill)
+     * @param onStdout          stdout callback
+     * @param onStderr          stderr callback
      */
-    public CommandHandle(long pid, ConnectStreamReader<StartResponse> streamReader,
+    public CommandHandle(long pid, MessageStream<StartResponse> streamReader,
+                         Response streamingResponse,
                          Runnable killAction,
                          Consumer<String> onStdout, Consumer<String> onStderr) {
         if (pid <= 0) {
@@ -43,6 +47,7 @@ public class CommandHandle implements AutoCloseable {
         }
         this.pid = pid;
         this.streamReader = streamReader;
+        this.streamingResponse = streamingResponse;
         this.killAction = killAction;
         this.onStdout = onStdout;
         this.onStderr = onStderr;
@@ -146,7 +151,14 @@ public class CommandHandle implements AutoCloseable {
     public void close() {
         if (closed.compareAndSet(false, true)) {
             if (streamReader != null) {
-                streamReader.close();
+                try {
+                    streamReader.close();
+                } catch (Exception e) {
+                    // Resource cleanup, ignore close exceptions
+                }
+            }
+            if (streamingResponse != null) {
+                streamingResponse.close();
             }
         }
     }

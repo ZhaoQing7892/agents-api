@@ -28,28 +28,28 @@ public class K8sDirectConnectExample {
             System.out.println("Sandbox ID: " + client.getSandboxID());
 
             // Execute command
-            CommandResult result = client.Commands.run("uname -a");
+            CommandResult result = client.commands.run("uname -a");
             System.out.println("uname: " + result.getStdout());
 
             // List directory
-            List<EntryInfo> entries = client.Files.listDir("/");
+            List<EntryInfo> entries = client.files.listDir("/");
             System.out.println("Root directory file count: " + entries.size());
             for (EntryInfo entry : entries) {
                 System.out.println("  " + entry);
             }
 
             // Create directory
-            client.Files.makeDir("/tmp/test-dir");
+            client.files.makeDir("/tmp/test-dir");
 
             // Check if file exists
-            boolean exists = client.Files.exists("/tmp/test-dir");
+            boolean exists = client.files.exists("/tmp/test-dir");
             System.out.println("/tmp/test-dir exists: " + exists);
 
             // Execute multiple commands
-            CommandResult whoami = client.Commands.run("whoami");
+            CommandResult whoami = client.commands.run("whoami");
             System.out.println("Current user: " + whoami.getStdout().trim());
 
-            CommandResult pwd = client.Commands.run("pwd");
+            CommandResult pwd = client.commands.run("pwd");
             System.out.println("Working directory: " + pwd.getStdout().trim());
 
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package io.openkruise.agents.client.runtime.filesystem;
 
 import io.openkruise.agents.client.runtime.utils.ConnectStreamReader;
+import okhttp3.Response;
 
 import java.io.Closeable;
 
@@ -11,10 +12,12 @@ import java.io.Closeable;
  */
 public class WatchHandle {
     private final Closeable streamReader;
+    private final Response streamingResponse;
     private volatile boolean stopped = false;
 
-    public WatchHandle(Closeable streamReader) {
+    public WatchHandle(Closeable streamReader, Response streamingResponse) {
         this.streamReader = streamReader;
+        this.streamingResponse = streamingResponse;
     }
 
     /**
@@ -27,6 +30,12 @@ public class WatchHandle {
             } catch (Exception e) {
                 System.err.println("Error closing stream reader: " + e.getMessage());
             } finally {
+                if (streamingResponse != null) {
+                    try {
+                        streamingResponse.close();
+                    } catch (Exception ignored) {
+                    }
+                }
                 stopped = true;
             }
         }

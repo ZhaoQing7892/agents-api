@@ -2,6 +2,7 @@ package io.openkruise.agents.client.runtime;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import io.openkruise.agents.client.runtime.exceptions.K8sOperationException;
 import io.openkruise.agents.client.v2.models.Sandbox;
 
 import java.util.Map;
@@ -25,9 +26,9 @@ class K8sHelper {
      * @param namespace   K8s namespace where the sandbox resides
      * @param sandboxName sandbox resource name
      * @return runtimeToken value, or null if not present
-     * @throws Exception if K8s query fails
+     * @throws K8sOperationException if K8s query fails or Sandbox CR not found
      */
-    static String getRuntimeToken(String namespace, String sandboxName) throws Exception {
+    static String getRuntimeToken(String namespace, String sandboxName) throws K8sOperationException {
         try (KubernetesClient client = new KubernetesClientBuilder().build()) {
             Sandbox sandbox = client.resources(Sandbox.class)
                 .inNamespace(namespace)
@@ -35,7 +36,7 @@ class K8sHelper {
                 .get();
 
             if (sandbox == null) {
-                throw new RuntimeException(
+                throw new K8sOperationException(
                     String.format("Sandbox CR %s/%s not found", namespace, sandboxName));
             }
 
@@ -45,6 +46,11 @@ class K8sHelper {
             }
 
             return null;
+        } catch (K8sOperationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new K8sOperationException(
+                String.format("Failed to query Sandbox CR %s/%s", namespace, sandboxName), e);
         }
     }
 }
