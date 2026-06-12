@@ -34,7 +34,7 @@ public class SandboxApi {
 
         SandboxResponse resp = lowLevelApi.sandboxesPost(body);
 
-        return new Sandbox(resp.getSandboxID(), resp.getEnvdAccessToken(), config, this);
+        return new Sandbox(resp.getSandboxID(), resp.getEnvdAccessToken(), config);
     }
 
     public Sandbox create(String template) throws ApiException {
@@ -50,7 +50,7 @@ public class SandboxApi {
             body.setTimeout(timeout);
             SandboxResponse resp = lowLevelApi.sandboxesSandboxIDConnectPost(sandboxID, body);
 
-            return new Sandbox(resp.getSandboxID(), resp.getEnvdAccessToken(), config, this);
+            return new Sandbox(resp.getSandboxID(), resp.getEnvdAccessToken(), config);
         } catch (ApiException e) {
             if (e.getCode() == 404) {
                 throw new SandboxNotFoundException(sandboxID, e);

@@ -1,19 +1,15 @@
 package io.openkruise.agents.client.e2b;
 
-import io.openkruise.agents.client.e2b.api.invoker.ApiException;
 import io.openkruise.agents.client.runtime.RuntimeClient;
 import io.openkruise.agents.client.runtime.commands.Commands;
 import io.openkruise.agents.client.runtime.filesystem.Filesystem;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
- * Represents a created/connected E2B sandbox instance (data plane) with try-with-resources support for automatic termination.
+ * Represents a created/connected E2B sandbox instance (data plane).
+ * Supports try-with-resources for automatic resource cleanup (HTTP connection + thread pools).
+ * Does NOT terminate the sandbox on close — use {@code sandboxApi.kill(sandboxID)} to terminate.
  */
 public class Sandbox implements AutoCloseable {
-
-    private static final Logger LOG = Logger.getLogger(Sandbox.class.getName());
 
     /** Command execution within the sandbox */
     public final Commands commands;
@@ -22,13 +18,11 @@ public class Sandbox implements AutoCloseable {
 
     private final String sandboxID;
     private final ConnectionConfig config;
-    private final SandboxApi sandboxApi;
     private final RuntimeClient runtimeClient;
 
-    Sandbox(String sandboxID, String envdAccessToken, ConnectionConfig config, SandboxApi sandboxApi) {
+    Sandbox(String sandboxID, String envdAccessToken, ConnectionConfig config) {
         this.sandboxID = sandboxID;
         this.config = config;
-        this.sandboxApi = sandboxApi;
 
         E2bRuntimeConfig runtimeConfig = E2bRuntimeConfig.fromConnectionConfig(config, envdAccessToken);
         this.runtimeClient = RuntimeClient.create(sandboxID, runtimeConfig);
@@ -52,16 +46,11 @@ public class Sandbox implements AutoCloseable {
         return runtimeClient;
     }
 
-    /** Closes and terminates the sandbox. Termination failures are logged but not thrown. */
+    /** Closes the HTTP connection and releases thread pools. Does NOT terminate the sandbox. */
     @Override
     public void close() {
         if (runtimeClient != null) {
             runtimeClient.close();
-        }
-        try {
-            sandboxApi.kill(sandboxID);
-        } catch (Exception e) {
-            LOG.log(Level.WARNING, "Failed to kill sandbox " + sandboxID + " on close()", e);
         }
     }
 
