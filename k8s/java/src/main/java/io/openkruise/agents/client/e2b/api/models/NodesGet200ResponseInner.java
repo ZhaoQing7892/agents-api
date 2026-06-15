@@ -53,7 +53,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * NodesGet200ResponseInner
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class NodesGet200ResponseInner {
   public static final String SERIALIZED_NAME_VERSION = "version";
   @SerializedName(SERIALIZED_NAME_VERSION)
@@ -62,11 +62,6 @@ public class NodesGet200ResponseInner {
   public static final String SERIALIZED_NAME_COMMIT = "commit";
   @SerializedName(SERIALIZED_NAME_COMMIT)
   private String commit;
-
-  public static final String SERIALIZED_NAME_NODE_I_D = "nodeID";
-  @Deprecated
-  @SerializedName(SERIALIZED_NAME_NODE_I_D)
-  private String nodeID;
 
   public static final String SERIALIZED_NAME_ID = "id";
   @SerializedName(SERIALIZED_NAME_ID)
@@ -150,31 +145,6 @@ public class NodesGet200ResponseInner {
 
   public void setCommit(String commit) {
     this.commit = commit;
-  }
-
-
-  @Deprecated
-  public NodesGet200ResponseInner nodeID(String nodeID) {
-    
-    this.nodeID = nodeID;
-    return this;
-  }
-
-   /**
-   * Identifier of the nomad node
-   * @return nodeID
-   * @deprecated
-  **/
-  @Deprecated
-  @javax.annotation.Nonnull
-  public String getNodeID() {
-    return nodeID;
-  }
-
-
-  @Deprecated
-  public void setNodeID(String nodeID) {
-    this.nodeID = nodeID;
   }
 
 
@@ -444,7 +414,6 @@ public class NodesGet200ResponseInner {
     NodesGet200ResponseInner nodesGet200ResponseInner = (NodesGet200ResponseInner) o;
     return Objects.equals(this.version, nodesGet200ResponseInner.version) &&
         Objects.equals(this.commit, nodesGet200ResponseInner.commit) &&
-        Objects.equals(this.nodeID, nodesGet200ResponseInner.nodeID) &&
         Objects.equals(this.id, nodesGet200ResponseInner.id) &&
         Objects.equals(this.serviceInstanceID, nodesGet200ResponseInner.serviceInstanceID) &&
         Objects.equals(this.clusterID, nodesGet200ResponseInner.clusterID) &&
@@ -460,7 +429,7 @@ public class NodesGet200ResponseInner {
 
   @Override
   public int hashCode() {
-    return Objects.hash(version, commit, nodeID, id, serviceInstanceID, clusterID, machineInfo, status, sandboxCount, metrics, createSuccesses, createFails, sandboxStartingCount, additionalProperties);
+    return Objects.hash(version, commit, id, serviceInstanceID, clusterID, machineInfo, status, sandboxCount, metrics, createSuccesses, createFails, sandboxStartingCount, additionalProperties);
   }
 
   @Override
@@ -469,7 +438,6 @@ public class NodesGet200ResponseInner {
     sb.append("class NodesGet200ResponseInner {\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    commit: ").append(toIndentedString(commit)).append("\n");
-    sb.append("    nodeID: ").append(toIndentedString(nodeID)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    serviceInstanceID: ").append(toIndentedString(serviceInstanceID)).append("\n");
     sb.append("    clusterID: ").append(toIndentedString(clusterID)).append("\n");
@@ -505,7 +473,6 @@ public class NodesGet200ResponseInner {
     openapiFields = new HashSet<String>();
     openapiFields.add("version");
     openapiFields.add("commit");
-    openapiFields.add("nodeID");
     openapiFields.add("id");
     openapiFields.add("serviceInstanceID");
     openapiFields.add("clusterID");
@@ -521,7 +488,6 @@ public class NodesGet200ResponseInner {
     openapiRequiredFields = new HashSet<String>();
     openapiRequiredFields.add("version");
     openapiRequiredFields.add("commit");
-    openapiRequiredFields.add("nodeID");
     openapiRequiredFields.add("id");
     openapiRequiredFields.add("serviceInstanceID");
     openapiRequiredFields.add("clusterID");
@@ -559,9 +525,6 @@ public class NodesGet200ResponseInner {
       if (!jsonObj.get("commit").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format("Expected the field `commit` to be a primitive type in the JSON string but got `%s`", jsonObj.get("commit").toString()));
       }
-      if (!jsonObj.get("nodeID").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format("Expected the field `nodeID` to be a primitive type in the JSON string but got `%s`", jsonObj.get("nodeID").toString()));
-      }
       if (!jsonObj.get("id").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format("Expected the field `id` to be a primitive type in the JSON string but got `%s`", jsonObj.get("id").toString()));
       }
@@ -595,7 +558,7 @@ public class NodesGet200ResponseInner {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -618,7 +581,7 @@ public class NodesGet200ResponseInner {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              NodesGet200ResponseInner instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

@@ -52,7 +52,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * TemplateUpdateResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class TemplateUpdateResponse {
   public static final String SERIALIZED_NAME_NAMES = "names";
   @SerializedName(SERIALIZED_NAME_NAMES)
@@ -233,7 +233,7 @@ public class TemplateUpdateResponse {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -256,7 +256,7 @@ public class TemplateUpdateResponse {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              TemplateUpdateResponse instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

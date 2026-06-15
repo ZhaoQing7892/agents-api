@@ -29,14 +29,16 @@ import java.io.IOException;
 
 import io.openkruise.agents.client.e2b.api.models.ConnectSandbox;
 import io.openkruise.agents.client.e2b.api.models.Error;
+import io.openkruise.agents.client.e2b.api.models.LogLevel;
 import io.openkruise.agents.client.e2b.api.models.LogsDirection;
 import io.openkruise.agents.client.e2b.api.models.NewSandbox;
 import io.openkruise.agents.client.e2b.api.models.ResumedSandbox;
-import io.openkruise.agents.client.e2b.api.models.Sandbox;
 import io.openkruise.agents.client.e2b.api.models.SandboxDetail;
 import io.openkruise.agents.client.e2b.api.models.SandboxLogs;
 import io.openkruise.agents.client.e2b.api.models.SandboxLogsV2Response;
 import io.openkruise.agents.client.e2b.api.models.SandboxMetric;
+import io.openkruise.agents.client.e2b.api.models.SandboxNetworkUpdateConfig;
+import io.openkruise.agents.client.e2b.api.models.SandboxResponse;
 import io.openkruise.agents.client.e2b.api.models.SandboxState;
 import io.openkruise.agents.client.e2b.api.models.SandboxesGet200ResponseInner;
 import io.openkruise.agents.client.e2b.api.models.SandboxesSandboxIDRefreshesPostRequest;
@@ -149,7 +151,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -282,7 +284,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -417,7 +419,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -436,7 +438,7 @@ public class SandboxesApi {
      * 
      * Create a sandbox from the template
      * @param newSandbox  (required)
-     * @return Sandbox
+     * @return SandboxResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -447,8 +449,8 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public Sandbox sandboxesPost(NewSandbox newSandbox) throws ApiException {
-        ApiResponse<Sandbox> localVarResp = sandboxesPostWithHttpInfo(newSandbox);
+    public SandboxResponse sandboxesPost(NewSandbox newSandbox) throws ApiException {
+        ApiResponse<SandboxResponse> localVarResp = sandboxesPostWithHttpInfo(newSandbox);
         return localVarResp.getData();
     }
 
@@ -456,7 +458,7 @@ public class SandboxesApi {
      * 
      * Create a sandbox from the template
      * @param newSandbox  (required)
-     * @return ApiResponse&lt;Sandbox&gt;
+     * @return ApiResponse&lt;SandboxResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -467,9 +469,9 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<Sandbox> sandboxesPostWithHttpInfo(NewSandbox newSandbox) throws ApiException {
+    public ApiResponse<SandboxResponse> sandboxesPostWithHttpInfo(NewSandbox newSandbox) throws ApiException {
         okhttp3.Call localVarCall = sandboxesPostValidateBeforeCall(newSandbox, null);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
@@ -489,10 +491,10 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call sandboxesPostAsync(NewSandbox newSandbox, final ApiCallback<Sandbox> _callback) throws ApiException {
+    public okhttp3.Call sandboxesPostAsync(NewSandbox newSandbox, final ApiCallback<SandboxResponse> _callback) throws ApiException {
 
         okhttp3.Call localVarCall = sandboxesPostValidateBeforeCall(newSandbox, _callback);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -556,7 +558,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -581,7 +583,7 @@ public class SandboxesApi {
      * Returns sandbox details. If the sandbox is paused, it will be resumed. TTL is only extended.
      * @param sandboxID  (required)
      * @param connectSandbox  (required)
-     * @return Sandbox
+     * @return SandboxResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -594,8 +596,8 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public Sandbox sandboxesSandboxIDConnectPost(String sandboxID, ConnectSandbox connectSandbox) throws ApiException {
-        ApiResponse<Sandbox> localVarResp = sandboxesSandboxIDConnectPostWithHttpInfo(sandboxID, connectSandbox);
+    public SandboxResponse sandboxesSandboxIDConnectPost(String sandboxID, ConnectSandbox connectSandbox) throws ApiException {
+        ApiResponse<SandboxResponse> localVarResp = sandboxesSandboxIDConnectPostWithHttpInfo(sandboxID, connectSandbox);
         return localVarResp.getData();
     }
 
@@ -604,7 +606,7 @@ public class SandboxesApi {
      * Returns sandbox details. If the sandbox is paused, it will be resumed. TTL is only extended.
      * @param sandboxID  (required)
      * @param connectSandbox  (required)
-     * @return ApiResponse&lt;Sandbox&gt;
+     * @return ApiResponse&lt;SandboxResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -617,9 +619,9 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<Sandbox> sandboxesSandboxIDConnectPostWithHttpInfo(String sandboxID, ConnectSandbox connectSandbox) throws ApiException {
+    public ApiResponse<SandboxResponse> sandboxesSandboxIDConnectPostWithHttpInfo(String sandboxID, ConnectSandbox connectSandbox) throws ApiException {
         okhttp3.Call localVarCall = sandboxesSandboxIDConnectPostValidateBeforeCall(sandboxID, connectSandbox, null);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
@@ -642,10 +644,10 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call sandboxesSandboxIDConnectPostAsync(String sandboxID, ConnectSandbox connectSandbox, final ApiCallback<Sandbox> _callback) throws ApiException {
+    public okhttp3.Call sandboxesSandboxIDConnectPostAsync(String sandboxID, ConnectSandbox connectSandbox, final ApiCallback<SandboxResponse> _callback) throws ApiException {
 
         okhttp3.Call localVarCall = sandboxesSandboxIDConnectPostValidateBeforeCall(sandboxID, connectSandbox, _callback);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -705,7 +707,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -836,7 +838,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -983,7 +985,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1142,7 +1144,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1231,6 +1233,151 @@ public class SandboxesApi {
         return localVarCall;
     }
     /**
+     * Build call for sandboxesSandboxIDNetworkPut
+     * @param sandboxID  (required)
+     * @param sandboxNetworkUpdateConfig  (required)
+     * @param _callback Callback for upload/download progress
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 204 </td><td> Successfully updated the sandbox network configuration </td><td>  -  </td></tr>
+        <tr><td> 401 </td><td> Authentication error </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Not found </td><td>  -  </td></tr>
+        <tr><td> 409 </td><td> Conflict </td><td>  -  </td></tr>
+        <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call sandboxesSandboxIDNetworkPutCall(String sandboxID, SandboxNetworkUpdateConfig sandboxNetworkUpdateConfig, final ApiCallback _callback) throws ApiException {
+        String basePath = null;
+        // Operation Servers
+        String[] localBasePaths = new String[] {  };
+
+        // Determine Base Path to Use
+        if (localCustomBaseUrl != null){
+            basePath = localCustomBaseUrl;
+        } else if ( localBasePaths.length > 0 ) {
+            basePath = localBasePaths[localHostIndex];
+        } else {
+            basePath = null;
+        }
+
+        Object localVarPostBody = sandboxNetworkUpdateConfig;
+
+        // create path and map variables
+        String localVarPath = "/sandboxes/{sandboxID}/network"
+            .replace("{" + "sandboxID" + "}", localVarApiClient.escapeString(sandboxID.toString()));
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        Map<String, String> localVarCookieParams = new HashMap<String, String>();
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = {
+            "application/json"
+        };
+        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
+
+        final String[] localVarContentTypes = {
+            "application/json"
+        };
+        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
+        if (localVarContentType != null) {
+            localVarHeaderParams.put("Content-Type", localVarContentType);
+        }
+
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
+        return localVarApiClient.buildCall(basePath, localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private okhttp3.Call sandboxesSandboxIDNetworkPutValidateBeforeCall(String sandboxID, SandboxNetworkUpdateConfig sandboxNetworkUpdateConfig, final ApiCallback _callback) throws ApiException {
+        // verify the required parameter 'sandboxID' is set
+        if (sandboxID == null) {
+            throw new ApiException("Missing the required parameter 'sandboxID' when calling sandboxesSandboxIDNetworkPut(Async)");
+        }
+
+        // verify the required parameter 'sandboxNetworkUpdateConfig' is set
+        if (sandboxNetworkUpdateConfig == null) {
+            throw new ApiException("Missing the required parameter 'sandboxNetworkUpdateConfig' when calling sandboxesSandboxIDNetworkPut(Async)");
+        }
+
+        return sandboxesSandboxIDNetworkPutCall(sandboxID, sandboxNetworkUpdateConfig, _callback);
+
+    }
+
+    /**
+     * 
+     * Update the network configuration for a running sandbox. Replaces the current egress rules with the provided configuration. Omitting field clears it.
+     * @param sandboxID  (required)
+     * @param sandboxNetworkUpdateConfig  (required)
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 204 </td><td> Successfully updated the sandbox network configuration </td><td>  -  </td></tr>
+        <tr><td> 401 </td><td> Authentication error </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Not found </td><td>  -  </td></tr>
+        <tr><td> 409 </td><td> Conflict </td><td>  -  </td></tr>
+        <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
+     </table>
+     */
+    public void sandboxesSandboxIDNetworkPut(String sandboxID, SandboxNetworkUpdateConfig sandboxNetworkUpdateConfig) throws ApiException {
+        sandboxesSandboxIDNetworkPutWithHttpInfo(sandboxID, sandboxNetworkUpdateConfig);
+    }
+
+    /**
+     * 
+     * Update the network configuration for a running sandbox. Replaces the current egress rules with the provided configuration. Omitting field clears it.
+     * @param sandboxID  (required)
+     * @param sandboxNetworkUpdateConfig  (required)
+     * @return ApiResponse&lt;Void&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 204 </td><td> Successfully updated the sandbox network configuration </td><td>  -  </td></tr>
+        <tr><td> 401 </td><td> Authentication error </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Not found </td><td>  -  </td></tr>
+        <tr><td> 409 </td><td> Conflict </td><td>  -  </td></tr>
+        <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
+     </table>
+     */
+    public ApiResponse<Void> sandboxesSandboxIDNetworkPutWithHttpInfo(String sandboxID, SandboxNetworkUpdateConfig sandboxNetworkUpdateConfig) throws ApiException {
+        okhttp3.Call localVarCall = sandboxesSandboxIDNetworkPutValidateBeforeCall(sandboxID, sandboxNetworkUpdateConfig, null);
+        return localVarApiClient.execute(localVarCall);
+    }
+
+    /**
+     *  (asynchronously)
+     * Update the network configuration for a running sandbox. Replaces the current egress rules with the provided configuration. Omitting field clears it.
+     * @param sandboxID  (required)
+     * @param sandboxNetworkUpdateConfig  (required)
+     * @param _callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 204 </td><td> Successfully updated the sandbox network configuration </td><td>  -  </td></tr>
+        <tr><td> 401 </td><td> Authentication error </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Not found </td><td>  -  </td></tr>
+        <tr><td> 409 </td><td> Conflict </td><td>  -  </td></tr>
+        <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call sandboxesSandboxIDNetworkPutAsync(String sandboxID, SandboxNetworkUpdateConfig sandboxNetworkUpdateConfig, final ApiCallback<Void> _callback) throws ApiException {
+
+        okhttp3.Call localVarCall = sandboxesSandboxIDNetworkPutValidateBeforeCall(sandboxID, sandboxNetworkUpdateConfig, _callback);
+        localVarApiClient.executeAsync(localVarCall, _callback);
+        return localVarCall;
+    }
+    /**
      * Build call for sandboxesSandboxIDPausePost
      * @param sandboxID  (required)
      * @param _callback Callback for upload/download progress
@@ -1287,7 +1434,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1422,7 +1569,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1558,7 +1705,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1584,7 +1731,7 @@ public class SandboxesApi {
      * Resume the sandbox
      * @param sandboxID  (required)
      * @param resumedSandbox  (required)
-     * @return Sandbox
+     * @return SandboxResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -1598,8 +1745,8 @@ public class SandboxesApi {
      * @deprecated
      */
     @Deprecated
-    public Sandbox sandboxesSandboxIDResumePost(String sandboxID, ResumedSandbox resumedSandbox) throws ApiException {
-        ApiResponse<Sandbox> localVarResp = sandboxesSandboxIDResumePostWithHttpInfo(sandboxID, resumedSandbox);
+    public SandboxResponse sandboxesSandboxIDResumePost(String sandboxID, ResumedSandbox resumedSandbox) throws ApiException {
+        ApiResponse<SandboxResponse> localVarResp = sandboxesSandboxIDResumePostWithHttpInfo(sandboxID, resumedSandbox);
         return localVarResp.getData();
     }
 
@@ -1608,7 +1755,7 @@ public class SandboxesApi {
      * Resume the sandbox
      * @param sandboxID  (required)
      * @param resumedSandbox  (required)
-     * @return ApiResponse&lt;Sandbox&gt;
+     * @return ApiResponse&lt;SandboxResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
@@ -1622,9 +1769,9 @@ public class SandboxesApi {
      * @deprecated
      */
     @Deprecated
-    public ApiResponse<Sandbox> sandboxesSandboxIDResumePostWithHttpInfo(String sandboxID, ResumedSandbox resumedSandbox) throws ApiException {
+    public ApiResponse<SandboxResponse> sandboxesSandboxIDResumePostWithHttpInfo(String sandboxID, ResumedSandbox resumedSandbox) throws ApiException {
         okhttp3.Call localVarCall = sandboxesSandboxIDResumePostValidateBeforeCall(sandboxID, resumedSandbox, null);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
@@ -1648,10 +1795,10 @@ public class SandboxesApi {
      * @deprecated
      */
     @Deprecated
-    public okhttp3.Call sandboxesSandboxIDResumePostAsync(String sandboxID, ResumedSandbox resumedSandbox, final ApiCallback<Sandbox> _callback) throws ApiException {
+    public okhttp3.Call sandboxesSandboxIDResumePostAsync(String sandboxID, ResumedSandbox resumedSandbox, final ApiCallback<SandboxResponse> _callback) throws ApiException {
 
         okhttp3.Call localVarCall = sandboxesSandboxIDResumePostValidateBeforeCall(sandboxID, resumedSandbox, _callback);
-        Type localVarReturnType = new TypeToken<Sandbox>(){}.getType();
+        Type localVarReturnType = new TypeToken<SandboxResponse>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -1714,7 +1861,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -1862,7 +2009,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -2014,7 +2161,7 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
@@ -2103,6 +2250,8 @@ public class SandboxesApi {
      * @param cursor Starting timestamp of the logs that should be returned in milliseconds (optional)
      * @param limit Maximum number of logs that should be returned (optional, default to 1000)
      * @param direction Direction of the logs that should be returned (optional)
+     * @param level Minimum log level to return. Logs below this level are excluded (optional)
+     * @param search Case-sensitive substring match on log message content (optional)
      * @param _callback Callback for upload/download progress
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
@@ -2115,7 +2264,7 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call v2SandboxesSandboxIDLogsGetCall(String sandboxID, Long cursor, Integer limit, LogsDirection direction, final ApiCallback _callback) throws ApiException {
+    public okhttp3.Call v2SandboxesSandboxIDLogsGetCall(String sandboxID, Long cursor, Integer limit, LogsDirection direction, LogLevel level, String search, final ApiCallback _callback) throws ApiException {
         String basePath = null;
         // Operation Servers
         String[] localBasePaths = new String[] {  };
@@ -2153,6 +2302,14 @@ public class SandboxesApi {
             localVarQueryParams.addAll(localVarApiClient.parameterToPair("direction", direction));
         }
 
+        if (level != null) {
+            localVarQueryParams.addAll(localVarApiClient.parameterToPair("level", level));
+        }
+
+        if (search != null) {
+            localVarQueryParams.addAll(localVarApiClient.parameterToPair("search", search));
+        }
+
         final String[] localVarAccepts = {
             "application/json"
         };
@@ -2168,18 +2325,18 @@ public class SandboxesApi {
             localVarHeaderParams.put("Content-Type", localVarContentType);
         }
 
-        String[] localVarAuthNames = new String[] { "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth" };
+        String[] localVarAuthNames = new String[] { "AuthProviderBearerAuth", "Supabase1TokenAuth", "ApiKeyAuth", "Supabase2TeamAuth", "AuthProviderTeamAuth" };
         return localVarApiClient.buildCall(basePath, localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
     }
 
     @SuppressWarnings("rawtypes")
-    private okhttp3.Call v2SandboxesSandboxIDLogsGetValidateBeforeCall(String sandboxID, Long cursor, Integer limit, LogsDirection direction, final ApiCallback _callback) throws ApiException {
+    private okhttp3.Call v2SandboxesSandboxIDLogsGetValidateBeforeCall(String sandboxID, Long cursor, Integer limit, LogsDirection direction, LogLevel level, String search, final ApiCallback _callback) throws ApiException {
         // verify the required parameter 'sandboxID' is set
         if (sandboxID == null) {
             throw new ApiException("Missing the required parameter 'sandboxID' when calling v2SandboxesSandboxIDLogsGet(Async)");
         }
 
-        return v2SandboxesSandboxIDLogsGetCall(sandboxID, cursor, limit, direction, _callback);
+        return v2SandboxesSandboxIDLogsGetCall(sandboxID, cursor, limit, direction, level, search, _callback);
 
     }
 
@@ -2190,6 +2347,8 @@ public class SandboxesApi {
      * @param cursor Starting timestamp of the logs that should be returned in milliseconds (optional)
      * @param limit Maximum number of logs that should be returned (optional, default to 1000)
      * @param direction Direction of the logs that should be returned (optional)
+     * @param level Minimum log level to return. Logs below this level are excluded (optional)
+     * @param search Case-sensitive substring match on log message content (optional)
      * @return SandboxLogsV2Response
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -2201,8 +2360,8 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public SandboxLogsV2Response v2SandboxesSandboxIDLogsGet(String sandboxID, Long cursor, Integer limit, LogsDirection direction) throws ApiException {
-        ApiResponse<SandboxLogsV2Response> localVarResp = v2SandboxesSandboxIDLogsGetWithHttpInfo(sandboxID, cursor, limit, direction);
+    public SandboxLogsV2Response v2SandboxesSandboxIDLogsGet(String sandboxID, Long cursor, Integer limit, LogsDirection direction, LogLevel level, String search) throws ApiException {
+        ApiResponse<SandboxLogsV2Response> localVarResp = v2SandboxesSandboxIDLogsGetWithHttpInfo(sandboxID, cursor, limit, direction, level, search);
         return localVarResp.getData();
     }
 
@@ -2213,6 +2372,8 @@ public class SandboxesApi {
      * @param cursor Starting timestamp of the logs that should be returned in milliseconds (optional)
      * @param limit Maximum number of logs that should be returned (optional, default to 1000)
      * @param direction Direction of the logs that should be returned (optional)
+     * @param level Minimum log level to return. Logs below this level are excluded (optional)
+     * @param search Case-sensitive substring match on log message content (optional)
      * @return ApiResponse&lt;SandboxLogsV2Response&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -2224,8 +2385,8 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<SandboxLogsV2Response> v2SandboxesSandboxIDLogsGetWithHttpInfo(String sandboxID, Long cursor, Integer limit, LogsDirection direction) throws ApiException {
-        okhttp3.Call localVarCall = v2SandboxesSandboxIDLogsGetValidateBeforeCall(sandboxID, cursor, limit, direction, null);
+    public ApiResponse<SandboxLogsV2Response> v2SandboxesSandboxIDLogsGetWithHttpInfo(String sandboxID, Long cursor, Integer limit, LogsDirection direction, LogLevel level, String search) throws ApiException {
+        okhttp3.Call localVarCall = v2SandboxesSandboxIDLogsGetValidateBeforeCall(sandboxID, cursor, limit, direction, level, search, null);
         Type localVarReturnType = new TypeToken<SandboxLogsV2Response>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
@@ -2237,6 +2398,8 @@ public class SandboxesApi {
      * @param cursor Starting timestamp of the logs that should be returned in milliseconds (optional)
      * @param limit Maximum number of logs that should be returned (optional, default to 1000)
      * @param direction Direction of the logs that should be returned (optional)
+     * @param level Minimum log level to return. Logs below this level are excluded (optional)
+     * @param search Case-sensitive substring match on log message content (optional)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
@@ -2249,9 +2412,9 @@ public class SandboxesApi {
         <tr><td> 500 </td><td> Server error </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call v2SandboxesSandboxIDLogsGetAsync(String sandboxID, Long cursor, Integer limit, LogsDirection direction, final ApiCallback<SandboxLogsV2Response> _callback) throws ApiException {
+    public okhttp3.Call v2SandboxesSandboxIDLogsGetAsync(String sandboxID, Long cursor, Integer limit, LogsDirection direction, LogLevel level, String search, final ApiCallback<SandboxLogsV2Response> _callback) throws ApiException {
 
-        okhttp3.Call localVarCall = v2SandboxesSandboxIDLogsGetValidateBeforeCall(sandboxID, cursor, limit, direction, _callback);
+        okhttp3.Call localVarCall = v2SandboxesSandboxIDLogsGetValidateBeforeCall(sandboxID, cursor, limit, direction, level, search, _callback);
         Type localVarReturnType = new TypeToken<SandboxLogsV2Response>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;

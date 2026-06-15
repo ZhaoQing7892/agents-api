@@ -20,6 +20,8 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import io.openkruise.agents.client.e2b.api.models.SandboxLifecycle;
+import io.openkruise.agents.client.e2b.api.models.SandboxNetworkConfig;
 import io.openkruise.agents.client.e2b.api.models.SandboxState;
 import io.openkruise.agents.client.e2b.api.models.SandboxVolumeMount;
 import java.io.IOException;
@@ -58,7 +60,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * SandboxDetail
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class SandboxDetail {
   public static final String SERIALIZED_NAME_TEMPLATE_I_D = "templateID";
   @SerializedName(SERIALIZED_NAME_TEMPLATE_I_D)
@@ -93,6 +95,10 @@ public class SandboxDetail {
   @SerializedName(SERIALIZED_NAME_ENVD_ACCESS_TOKEN)
   private String envdAccessToken;
 
+  public static final String SERIALIZED_NAME_ALLOW_INTERNET_ACCESS = "allowInternetAccess";
+  @SerializedName(SERIALIZED_NAME_ALLOW_INTERNET_ACCESS)
+  private Boolean allowInternetAccess;
+
   public static final String SERIALIZED_NAME_DOMAIN = "domain";
   @SerializedName(SERIALIZED_NAME_DOMAIN)
   private String domain;
@@ -116,6 +122,14 @@ public class SandboxDetail {
   public static final String SERIALIZED_NAME_STATE = "state";
   @SerializedName(SERIALIZED_NAME_STATE)
   private SandboxState state;
+
+  public static final String SERIALIZED_NAME_NETWORK = "network";
+  @SerializedName(SERIALIZED_NAME_NETWORK)
+  private SandboxNetworkConfig network;
+
+  public static final String SERIALIZED_NAME_LIFECYCLE = "lifecycle";
+  @SerializedName(SERIALIZED_NAME_LIFECYCLE)
+  private SandboxLifecycle lifecycle;
 
   public static final String SERIALIZED_NAME_VOLUME_MOUNTS = "volumeMounts";
   @SerializedName(SERIALIZED_NAME_VOLUME_MOUNTS)
@@ -296,6 +310,27 @@ public class SandboxDetail {
   }
 
 
+  public SandboxDetail allowInternetAccess(Boolean allowInternetAccess) {
+    
+    this.allowInternetAccess = allowInternetAccess;
+    return this;
+  }
+
+   /**
+   * Whether internet access was explicitly enabled or disabled for the sandbox. Null means it was not explicitly set.
+   * @return allowInternetAccess
+  **/
+  @javax.annotation.Nullable
+  public Boolean getAllowInternetAccess() {
+    return allowInternetAccess;
+  }
+
+
+  public void setAllowInternetAccess(Boolean allowInternetAccess) {
+    this.allowInternetAccess = allowInternetAccess;
+  }
+
+
   public SandboxDetail domain(String domain) {
     
     this.domain = domain;
@@ -433,6 +468,48 @@ public class SandboxDetail {
   }
 
 
+  public SandboxDetail network(SandboxNetworkConfig network) {
+    
+    this.network = network;
+    return this;
+  }
+
+   /**
+   * Get network
+   * @return network
+  **/
+  @javax.annotation.Nullable
+  public SandboxNetworkConfig getNetwork() {
+    return network;
+  }
+
+
+  public void setNetwork(SandboxNetworkConfig network) {
+    this.network = network;
+  }
+
+
+  public SandboxDetail lifecycle(SandboxLifecycle lifecycle) {
+    
+    this.lifecycle = lifecycle;
+    return this;
+  }
+
+   /**
+   * Get lifecycle
+   * @return lifecycle
+  **/
+  @javax.annotation.Nullable
+  public SandboxLifecycle getLifecycle() {
+    return lifecycle;
+  }
+
+
+  public void setLifecycle(SandboxLifecycle lifecycle) {
+    this.lifecycle = lifecycle;
+  }
+
+
   public SandboxDetail volumeMounts(List<SandboxVolumeMount> volumeMounts) {
     
     this.volumeMounts = volumeMounts;
@@ -524,12 +601,15 @@ public class SandboxDetail {
         Objects.equals(this.endAt, sandboxDetail.endAt) &&
         Objects.equals(this.envdVersion, sandboxDetail.envdVersion) &&
         Objects.equals(this.envdAccessToken, sandboxDetail.envdAccessToken) &&
+        Objects.equals(this.allowInternetAccess, sandboxDetail.allowInternetAccess) &&
         Objects.equals(this.domain, sandboxDetail.domain) &&
         Objects.equals(this.cpuCount, sandboxDetail.cpuCount) &&
         Objects.equals(this.memoryMB, sandboxDetail.memoryMB) &&
         Objects.equals(this.diskSizeMB, sandboxDetail.diskSizeMB) &&
         Objects.equals(this.metadata, sandboxDetail.metadata) &&
         Objects.equals(this.state, sandboxDetail.state) &&
+        Objects.equals(this.network, sandboxDetail.network) &&
+        Objects.equals(this.lifecycle, sandboxDetail.lifecycle) &&
         Objects.equals(this.volumeMounts, sandboxDetail.volumeMounts)&&
         Objects.equals(this.additionalProperties, sandboxDetail.additionalProperties);
   }
@@ -540,7 +620,7 @@ public class SandboxDetail {
 
   @Override
   public int hashCode() {
-    return Objects.hash(templateID, alias, sandboxID, clientID, startedAt, endAt, envdVersion, envdAccessToken, domain, cpuCount, memoryMB, diskSizeMB, metadata, state, volumeMounts, additionalProperties);
+    return Objects.hash(templateID, alias, sandboxID, clientID, startedAt, endAt, envdVersion, envdAccessToken, allowInternetAccess, domain, cpuCount, memoryMB, diskSizeMB, metadata, state, network, lifecycle, volumeMounts, additionalProperties);
   }
 
   private static <T> int hashCodeNullable(JsonNullable<T> a) {
@@ -562,12 +642,15 @@ public class SandboxDetail {
     sb.append("    endAt: ").append(toIndentedString(endAt)).append("\n");
     sb.append("    envdVersion: ").append(toIndentedString(envdVersion)).append("\n");
     sb.append("    envdAccessToken: ").append(toIndentedString(envdAccessToken)).append("\n");
+    sb.append("    allowInternetAccess: ").append(toIndentedString(allowInternetAccess)).append("\n");
     sb.append("    domain: ").append(toIndentedString(domain)).append("\n");
     sb.append("    cpuCount: ").append(toIndentedString(cpuCount)).append("\n");
     sb.append("    memoryMB: ").append(toIndentedString(memoryMB)).append("\n");
     sb.append("    diskSizeMB: ").append(toIndentedString(diskSizeMB)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
+    sb.append("    network: ").append(toIndentedString(network)).append("\n");
+    sb.append("    lifecycle: ").append(toIndentedString(lifecycle)).append("\n");
     sb.append("    volumeMounts: ").append(toIndentedString(volumeMounts)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("}");
@@ -600,12 +683,15 @@ public class SandboxDetail {
     openapiFields.add("endAt");
     openapiFields.add("envdVersion");
     openapiFields.add("envdAccessToken");
+    openapiFields.add("allowInternetAccess");
     openapiFields.add("domain");
     openapiFields.add("cpuCount");
     openapiFields.add("memoryMB");
     openapiFields.add("diskSizeMB");
     openapiFields.add("metadata");
     openapiFields.add("state");
+    openapiFields.add("network");
+    openapiFields.add("lifecycle");
     openapiFields.add("volumeMounts");
 
     // a set of required properties/fields (JSON key names)
@@ -662,6 +748,14 @@ public class SandboxDetail {
       if ((jsonObj.get("domain") != null && !jsonObj.get("domain").isJsonNull()) && !jsonObj.get("domain").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format("Expected the field `domain` to be a primitive type in the JSON string but got `%s`", jsonObj.get("domain").toString()));
       }
+      // validate the optional field `network`
+      if (jsonObj.get("network") != null && !jsonObj.get("network").isJsonNull()) {
+        SandboxNetworkConfig.validateJsonObject(jsonObj.getAsJsonObject("network"));
+      }
+      // validate the optional field `lifecycle`
+      if (jsonObj.get("lifecycle") != null && !jsonObj.get("lifecycle").isJsonNull()) {
+        SandboxLifecycle.validateJsonObject(jsonObj.getAsJsonObject("lifecycle"));
+      }
       if (jsonObj.get("volumeMounts") != null && !jsonObj.get("volumeMounts").isJsonNull()) {
         JsonArray jsonArrayvolumeMounts = jsonObj.getAsJsonArray("volumeMounts");
         if (jsonArrayvolumeMounts != null) {
@@ -696,7 +790,7 @@ public class SandboxDetail {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -719,7 +813,7 @@ public class SandboxDetail {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              SandboxDetail instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

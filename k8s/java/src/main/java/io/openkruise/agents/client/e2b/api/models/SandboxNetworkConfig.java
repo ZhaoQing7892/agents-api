@@ -20,9 +20,12 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import io.openkruise.agents.client.e2b.api.models.SandboxNetworkRule;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,7 +55,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * SandboxNetworkConfig
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class SandboxNetworkConfig {
   public static final String SERIALIZED_NAME_ALLOW_PUBLIC_TRAFFIC = "allowPublicTraffic";
   @SerializedName(SERIALIZED_NAME_ALLOW_PUBLIC_TRAFFIC)
@@ -69,6 +72,10 @@ public class SandboxNetworkConfig {
   public static final String SERIALIZED_NAME_MASK_REQUEST_HOST = "maskRequestHost";
   @SerializedName(SERIALIZED_NAME_MASK_REQUEST_HOST)
   private String maskRequestHost;
+
+  public static final String SERIALIZED_NAME_RULES = "rules";
+  @SerializedName(SERIALIZED_NAME_RULES)
+  private Map<String, List<SandboxNetworkRule>> rules = new HashMap<>();
 
   public SandboxNetworkConfig() {
   }
@@ -109,7 +116,7 @@ public class SandboxNetworkConfig {
   }
 
    /**
-   * List of allowed CIDR blocks or IP addresses for egress traffic. Allowed addresses always take precedence over blocked addresses.
+   * List of allowed destinations for egress traffic. Each entry can be a CIDR block (e.g. \&quot;8.8.8.8/32\&quot;), a bare IP address (e.g. \&quot;8.8.8.8\&quot;), or a domain name (e.g. \&quot;example.com\&quot;, \&quot;*.example.com\&quot;). Allowed entries always take precedence over denied entries.
    * @return allowOut
   **/
   @javax.annotation.Nullable
@@ -138,7 +145,7 @@ public class SandboxNetworkConfig {
   }
 
    /**
-   * List of denied CIDR blocks or IP addresses for egress traffic
+   * List of denied CIDR blocks or IP addresses for egress traffic. Domain names are not supported for deny rules.
    * @return denyOut
   **/
   @javax.annotation.Nullable
@@ -170,6 +177,35 @@ public class SandboxNetworkConfig {
 
   public void setMaskRequestHost(String maskRequestHost) {
     this.maskRequestHost = maskRequestHost;
+  }
+
+
+  public SandboxNetworkConfig rules(Map<String, List<SandboxNetworkRule>> rules) {
+    
+    this.rules = rules;
+    return this;
+  }
+
+  public SandboxNetworkConfig putRulesItem(String key, List<SandboxNetworkRule> rulesItem) {
+    if (this.rules == null) {
+      this.rules = new HashMap<>();
+    }
+    this.rules.put(key, rulesItem);
+    return this;
+  }
+
+   /**
+   * Per-domain transform rules applied to matching egress HTTP/HTTPS requests. Keys are domains (e.g. \&quot;api.example.com\&quot;, \&quot;example.com\&quot;). A domain listed here is not automatically allowed - use allowOut to permit the traffic. 
+   * @return rules
+  **/
+  @javax.annotation.Nullable
+  public Map<String, List<SandboxNetworkRule>> getRules() {
+    return rules;
+  }
+
+
+  public void setRules(Map<String, List<SandboxNetworkRule>> rules) {
+    this.rules = rules;
   }
 
   /**
@@ -230,13 +266,14 @@ public class SandboxNetworkConfig {
     return Objects.equals(this.allowPublicTraffic, sandboxNetworkConfig.allowPublicTraffic) &&
         Objects.equals(this.allowOut, sandboxNetworkConfig.allowOut) &&
         Objects.equals(this.denyOut, sandboxNetworkConfig.denyOut) &&
-        Objects.equals(this.maskRequestHost, sandboxNetworkConfig.maskRequestHost)&&
+        Objects.equals(this.maskRequestHost, sandboxNetworkConfig.maskRequestHost) &&
+        Objects.equals(this.rules, sandboxNetworkConfig.rules)&&
         Objects.equals(this.additionalProperties, sandboxNetworkConfig.additionalProperties);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowPublicTraffic, allowOut, denyOut, maskRequestHost, additionalProperties);
+    return Objects.hash(allowPublicTraffic, allowOut, denyOut, maskRequestHost, rules, additionalProperties);
   }
 
   @Override
@@ -247,6 +284,7 @@ public class SandboxNetworkConfig {
     sb.append("    allowOut: ").append(toIndentedString(allowOut)).append("\n");
     sb.append("    denyOut: ").append(toIndentedString(denyOut)).append("\n");
     sb.append("    maskRequestHost: ").append(toIndentedString(maskRequestHost)).append("\n");
+    sb.append("    rules: ").append(toIndentedString(rules)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -274,6 +312,7 @@ public class SandboxNetworkConfig {
     openapiFields.add("allowOut");
     openapiFields.add("denyOut");
     openapiFields.add("maskRequestHost");
+    openapiFields.add("rules");
 
     // a set of required properties/fields (JSON key names)
     openapiRequiredFields = new HashSet<String>();
@@ -322,7 +361,7 @@ public class SandboxNetworkConfig {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -345,7 +384,7 @@ public class SandboxNetworkConfig {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              SandboxNetworkConfig instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())

@@ -20,7 +20,6 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import io.openkruise.agents.client.e2b.api.models.ListedSandbox;
 import io.openkruise.agents.client.e2b.api.models.MachineInfo;
 import io.openkruise.agents.client.e2b.api.models.NodeMetrics;
 import io.openkruise.agents.client.e2b.api.models.NodeStatus;
@@ -56,7 +55,7 @@ import io.openkruise.agents.client.e2b.api.invoker.JSON;
 /**
  * NodeDetail
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-03-13T16:02:01.263+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-10T15:28:00.691+08:00[Asia/Shanghai]")
 public class NodeDetail {
   public static final String SERIALIZED_NAME_CLUSTER_I_D = "clusterID";
   @SerializedName(SERIALIZED_NAME_CLUSTER_I_D)
@@ -78,11 +77,6 @@ public class NodeDetail {
   @SerializedName(SERIALIZED_NAME_SERVICE_INSTANCE_I_D)
   private String serviceInstanceID;
 
-  public static final String SERIALIZED_NAME_NODE_I_D = "nodeID";
-  @Deprecated
-  @SerializedName(SERIALIZED_NAME_NODE_I_D)
-  private String nodeID;
-
   public static final String SERIALIZED_NAME_MACHINE_INFO = "machineInfo";
   @SerializedName(SERIALIZED_NAME_MACHINE_INFO)
   private MachineInfo machineInfo;
@@ -91,9 +85,9 @@ public class NodeDetail {
   @SerializedName(SERIALIZED_NAME_STATUS)
   private NodeStatus status;
 
-  public static final String SERIALIZED_NAME_SANDBOXES = "sandboxes";
-  @SerializedName(SERIALIZED_NAME_SANDBOXES)
-  private List<ListedSandbox> sandboxes = new ArrayList<>();
+  public static final String SERIALIZED_NAME_SANDBOX_COUNT = "sandboxCount";
+  @SerializedName(SERIALIZED_NAME_SANDBOX_COUNT)
+  private Integer sandboxCount;
 
   public static final String SERIALIZED_NAME_METRICS = "metrics";
   @SerializedName(SERIALIZED_NAME_METRICS)
@@ -219,31 +213,6 @@ public class NodeDetail {
   }
 
 
-  @Deprecated
-  public NodeDetail nodeID(String nodeID) {
-    
-    this.nodeID = nodeID;
-    return this;
-  }
-
-   /**
-   * Identifier of the nomad node
-   * @return nodeID
-   * @deprecated
-  **/
-  @Deprecated
-  @javax.annotation.Nonnull
-  public String getNodeID() {
-    return nodeID;
-  }
-
-
-  @Deprecated
-  public void setNodeID(String nodeID) {
-    this.nodeID = nodeID;
-  }
-
-
   public NodeDetail machineInfo(MachineInfo machineInfo) {
     
     this.machineInfo = machineInfo;
@@ -286,32 +255,24 @@ public class NodeDetail {
   }
 
 
-  public NodeDetail sandboxes(List<ListedSandbox> sandboxes) {
+  public NodeDetail sandboxCount(Integer sandboxCount) {
     
-    this.sandboxes = sandboxes;
-    return this;
-  }
-
-  public NodeDetail addSandboxesItem(ListedSandbox sandboxesItem) {
-    if (this.sandboxes == null) {
-      this.sandboxes = new ArrayList<>();
-    }
-    this.sandboxes.add(sandboxesItem);
+    this.sandboxCount = sandboxCount;
     return this;
   }
 
    /**
-   * List of sandboxes running on the node
-   * @return sandboxes
+   * Number of sandboxes running on the node
+   * @return sandboxCount
   **/
   @javax.annotation.Nonnull
-  public List<ListedSandbox> getSandboxes() {
-    return sandboxes;
+  public Integer getSandboxCount() {
+    return sandboxCount;
   }
 
 
-  public void setSandboxes(List<ListedSandbox> sandboxes) {
-    this.sandboxes = sandboxes;
+  public void setSandboxCount(Integer sandboxCount) {
+    this.sandboxCount = sandboxCount;
   }
 
 
@@ -466,10 +427,9 @@ public class NodeDetail {
         Objects.equals(this.commit, nodeDetail.commit) &&
         Objects.equals(this.id, nodeDetail.id) &&
         Objects.equals(this.serviceInstanceID, nodeDetail.serviceInstanceID) &&
-        Objects.equals(this.nodeID, nodeDetail.nodeID) &&
         Objects.equals(this.machineInfo, nodeDetail.machineInfo) &&
         Objects.equals(this.status, nodeDetail.status) &&
-        Objects.equals(this.sandboxes, nodeDetail.sandboxes) &&
+        Objects.equals(this.sandboxCount, nodeDetail.sandboxCount) &&
         Objects.equals(this.metrics, nodeDetail.metrics) &&
         Objects.equals(this.cachedBuilds, nodeDetail.cachedBuilds) &&
         Objects.equals(this.createSuccesses, nodeDetail.createSuccesses) &&
@@ -479,7 +439,7 @@ public class NodeDetail {
 
   @Override
   public int hashCode() {
-    return Objects.hash(clusterID, version, commit, id, serviceInstanceID, nodeID, machineInfo, status, sandboxes, metrics, cachedBuilds, createSuccesses, createFails, additionalProperties);
+    return Objects.hash(clusterID, version, commit, id, serviceInstanceID, machineInfo, status, sandboxCount, metrics, cachedBuilds, createSuccesses, createFails, additionalProperties);
   }
 
   @Override
@@ -491,10 +451,9 @@ public class NodeDetail {
     sb.append("    commit: ").append(toIndentedString(commit)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    serviceInstanceID: ").append(toIndentedString(serviceInstanceID)).append("\n");
-    sb.append("    nodeID: ").append(toIndentedString(nodeID)).append("\n");
     sb.append("    machineInfo: ").append(toIndentedString(machineInfo)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
-    sb.append("    sandboxes: ").append(toIndentedString(sandboxes)).append("\n");
+    sb.append("    sandboxCount: ").append(toIndentedString(sandboxCount)).append("\n");
     sb.append("    metrics: ").append(toIndentedString(metrics)).append("\n");
     sb.append("    cachedBuilds: ").append(toIndentedString(cachedBuilds)).append("\n");
     sb.append("    createSuccesses: ").append(toIndentedString(createSuccesses)).append("\n");
@@ -527,10 +486,9 @@ public class NodeDetail {
     openapiFields.add("commit");
     openapiFields.add("id");
     openapiFields.add("serviceInstanceID");
-    openapiFields.add("nodeID");
     openapiFields.add("machineInfo");
     openapiFields.add("status");
-    openapiFields.add("sandboxes");
+    openapiFields.add("sandboxCount");
     openapiFields.add("metrics");
     openapiFields.add("cachedBuilds");
     openapiFields.add("createSuccesses");
@@ -543,10 +501,9 @@ public class NodeDetail {
     openapiRequiredFields.add("commit");
     openapiRequiredFields.add("id");
     openapiRequiredFields.add("serviceInstanceID");
-    openapiRequiredFields.add("nodeID");
     openapiRequiredFields.add("machineInfo");
     openapiRequiredFields.add("status");
-    openapiRequiredFields.add("sandboxes");
+    openapiRequiredFields.add("sandboxCount");
     openapiRequiredFields.add("metrics");
     openapiRequiredFields.add("cachedBuilds");
     openapiRequiredFields.add("createSuccesses");
@@ -587,21 +544,8 @@ public class NodeDetail {
       if (!jsonObj.get("serviceInstanceID").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format("Expected the field `serviceInstanceID` to be a primitive type in the JSON string but got `%s`", jsonObj.get("serviceInstanceID").toString()));
       }
-      if (!jsonObj.get("nodeID").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format("Expected the field `nodeID` to be a primitive type in the JSON string but got `%s`", jsonObj.get("nodeID").toString()));
-      }
       // validate the required field `machineInfo`
       MachineInfo.validateJsonObject(jsonObj.getAsJsonObject("machineInfo"));
-      // ensure the json data is an array
-      if (!jsonObj.get("sandboxes").isJsonArray()) {
-        throw new IllegalArgumentException(String.format("Expected the field `sandboxes` to be an array in the JSON string but got `%s`", jsonObj.get("sandboxes").toString()));
-      }
-
-      JsonArray jsonArraysandboxes = jsonObj.getAsJsonArray("sandboxes");
-      // validate the required field `sandboxes` (array)
-      for (int i = 0; i < jsonArraysandboxes.size(); i++) {
-        ListedSandbox.validateJsonObject(jsonArraysandboxes.get(i).getAsJsonObject());
-      };
       // validate the required field `metrics`
       NodeMetrics.validateJsonObject(jsonObj.getAsJsonObject("metrics"));
       // ensure the required json array is present
@@ -630,7 +574,7 @@ public class NodeDetail {
              obj.remove("additionalProperties");
              // serialize additional properties
              if (value.getAdditionalProperties() != null) {
-               for (Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
+               for (Map.Entry<String, Object> entry : value.getAdditionalProperties().entrySet()) {
                  if (entry.getValue() instanceof String)
                    obj.addProperty(entry.getKey(), (String) entry.getValue());
                  else if (entry.getValue() instanceof Number)
@@ -653,7 +597,7 @@ public class NodeDetail {
              validateJsonObject(jsonObj);
              // store additional fields in the deserialized instance
              NodeDetail instance = thisAdapter.fromJsonTree(jsonObj);
-             for (Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+             for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
                    if (entry.getValue().getAsJsonPrimitive().isString())
