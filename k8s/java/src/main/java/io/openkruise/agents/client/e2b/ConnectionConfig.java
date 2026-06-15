@@ -163,17 +163,13 @@ public class ConnectionConfig {
 
         public Builder() {
             // Environment variables as defaults
-            String envApiKey = System.getenv("X_API_KEY");
+            String envApiKey = System.getenv("E2B_API_KEY");
             if (envApiKey != null && !envApiKey.isEmpty()) {
                 config.apiKey = envApiKey;
             }
-            String envScheme = System.getenv("SCHEME");
-            if (envScheme != null && !envScheme.isEmpty()) {
-                config.scheme = envScheme;
-            }
-            String envProtocol = System.getenv("PROTOCOL");
-            if (envProtocol != null && !envProtocol.isEmpty()) {
-                config.protocol = Protocol.valueOf(envProtocol.toUpperCase());
+            String domain = System.getenv("E2B_DOMAIN");
+            if (domain != null && !domain.isEmpty()) {
+                config.domain = domain;
             }
         }
 

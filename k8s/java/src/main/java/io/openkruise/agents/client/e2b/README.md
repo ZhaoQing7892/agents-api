@@ -328,16 +328,18 @@ Connection behavior is determined by two orthogonal dimensions: **Scheme** and *
 
 ### Priority
 
-`apiURL` / `sandboxBaseURL` (explicit override) > `protocol` + `domain` assembly > Environment variables (`X_API_KEY`,
-`SCHEME`, `PROTOCOL`) > Defaults
+`apiURL` / `sandboxBaseURL` (explicit override) > `protocol` + `domain` assembly > Environment variables (`E2B_API_KEY`,
+`E2B_DOMAIN`) > Defaults
 
 ### Environment Variables
 
-| Variable    | Description                                     |
-|-------------|-------------------------------------------------|
-| `X_API_KEY` | Default API Key                                 |
-| `SCHEME`    | Default URL scheme                              |
-| `PROTOCOL`  | Default routing protocol (`NATIVE` / `PRIVATE`) |
+The Builder constructor automatically reads these environment variables as defaults, which can then be overridden by
+Builder methods:
+
+| Variable      | Description     |
+|---------------|-----------------|
+| `E2B_API_KEY` | Default API Key |
+| `E2B_DOMAIN`  | Default domain  |
 
 ---
 

@@ -324,15 +324,16 @@ wh.stop();
 
 ### 优先级
 
-`apiURL` / `sandboxBaseURL`（显式覆盖） > `protocol` + `domain` 拼装 > 环境变量（`X_API_KEY`、`SCHEME`、`PROTOCOL`） > 默认值
+`apiURL` / `sandboxBaseURL`（显式覆盖） > `protocol` + `domain` 拼装 > 环境变量（`E2B_API_KEY`、`E2B_DOMAIN`） > 默认值
 
 ### 环境变量
 
-| 变量          | 说明                           |
-|-------------|------------------------------|
-| `X_API_KEY` | 默认 API Key                   |
-| `SCHEME`    | 默认 URL scheme                |
-| `PROTOCOL`  | 默认路由协议（`NATIVE` / `PRIVATE`） |
+Builder 构造时自动读取以下环境变量作为默认值，之后可通过 Builder 方法显式覆盖：
+
+| 变量            | 说明         |
+|---------------|------------|
+| `E2B_API_KEY` | 默认 API Key |
+| `E2B_DOMAIN`  | 默认域名       |
 
 ---
 
