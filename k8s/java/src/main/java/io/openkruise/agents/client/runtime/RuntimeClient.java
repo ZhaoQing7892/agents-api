@@ -75,6 +75,7 @@ public class RuntimeClient implements AutoCloseable {
 
     @Override
     public void close() {
+        files.closeAllWatchHandles();
         config.shutdown();
     }
 

@@ -227,7 +227,7 @@ public class Commands {
                 return response.isSuccessful();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send kill", e);
+            throw new RuntimeException("Failed to send signal", e);
         }
     }
 
@@ -351,7 +351,11 @@ public class Commands {
         public void close() {
             delegate.close();
             if (response != null) {
-                response.close();
+                try {
+                    response.close();
+                } catch (Exception ignored) {
+                    // Ignore close exceptions to satisfy Closeable contract
+                }
             }
         }
     }

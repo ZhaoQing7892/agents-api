@@ -90,7 +90,7 @@ public class ConnectionConfig {
     /** Envd URL for a specific sandbox, automatically selects NATIVE/PRIVATE format based on protocol. */
     public String getSandboxURL(String sandboxID) {
         if (sandboxBaseURL != null && !sandboxBaseURL.isEmpty()) {
-            return String.format("%s/%s", sandboxBaseURL, sandboxID);
+            return sandboxBaseURL;
         }
         String s = getSchemeOrDefault();
         if (protocol == Protocol.PRIVATE) {

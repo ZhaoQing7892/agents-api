@@ -92,11 +92,11 @@ public class RuntimeConfig {
      * Shared OkHttpClient with double-checked locking lazy initialization, reused by all RuntimeClients.
      */
     public OkHttpClient getOrCreateHttpClient() {
-        if (shutdown) {
-            throw new IllegalStateException("RuntimeConfig has been shut down");
-        }
         if (sharedHttpClient == null) {
             synchronized (httpClientLock) {
+                if (shutdown) {
+                    throw new IllegalStateException("RuntimeConfig has been shut down");
+                }
                 if (sharedHttpClient == null) {
                     sharedHttpClient = new OkHttpClient.Builder()
                         .connectTimeout(requestTimeoutMs, TimeUnit.MILLISECONDS)
@@ -113,11 +113,11 @@ public class RuntimeConfig {
      * Shared streaming OkHttpClient (no read timeout), reused by all RuntimeClients.
      */
     public OkHttpClient getOrCreateStreamingHttpClient() {
-        if (shutdown) {
-            throw new IllegalStateException("RuntimeConfig has been shut down");
-        }
         if (sharedStreamingClient == null) {
             synchronized (httpClientLock) {
+                if (shutdown) {
+                    throw new IllegalStateException("RuntimeConfig has been shut down");
+                }
                 if (sharedStreamingClient == null) {
                     sharedStreamingClient = new OkHttpClient.Builder()
                         .connectTimeout(requestTimeoutMs, TimeUnit.MILLISECONDS)

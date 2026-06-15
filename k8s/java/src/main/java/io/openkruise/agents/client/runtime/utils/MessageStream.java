@@ -4,9 +4,6 @@ import java.io.Closeable;
 
 /**
  * A stream of typed messages with iterator-style access and lifecycle management.
- * <p>
- * Both {@link ConnectStreamReader} and the ConnectResponse adapter implement this interface,
- * allowing {@link CommandHandle} to work with either stream type uniformly.
  *
  * @param <T> message type
  */

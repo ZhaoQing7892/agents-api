@@ -158,7 +158,11 @@ public class CommandHandle implements AutoCloseable {
                 }
             }
             if (streamingResponse != null) {
-                streamingResponse.close();
+                try {
+                    streamingResponse.close();
+                } catch (Exception ignored) {
+                    // Already closed by streamReader (ConnectResponseAdapter), ignore double-close
+                }
             }
         }
     }

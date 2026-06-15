@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +37,9 @@ public class Filesystem {
     private final RuntimeConfig config;
     private final OkHttpClient httpClient;
     private final OkHttpClient streamingClient;
+    /** Tracks active WatchHandles so they can be closed when the client shuts down (M5). */
+    private final Set<WatchHandle> activeWatchHandles =
+        ConcurrentHashMap.newKeySet();
 
     public Filesystem(String sandboxID, RuntimeConfig config, OkHttpClient httpClient, OkHttpClient streamingClient) {
         this.sandboxID = Objects.requireNonNull(sandboxID, "sandboxID cannot be null");
@@ -458,7 +463,24 @@ public class Filesystem {
         watchThread.setDaemon(true);
         watchThread.start();
 
-        return new WatchHandle(streamReader, response);
+        WatchHandle handle = new WatchHandle(streamReader, response);
+        activeWatchHandles.add(handle);
+        return handle;
+    }
+
+    /**
+     * Stops all active directory watches and clears the tracking set.
+     * Called by {@link io.openkruise.agents.client.runtime.RuntimeClient#close()} before config shutdown.
+     */
+    public void closeAllWatchHandles() {
+        for (WatchHandle handle : activeWatchHandles) {
+            try {
+                handle.stop();
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Error stopping watch handle during shutdown", e);
+            }
+        }
+        activeWatchHandles.clear();
     }
 
     private WatchHandle.FilesystemEventType mapEventType(EventType eventType) {
@@ -583,7 +605,7 @@ public class Filesystem {
 
     private String urlEncode(String value) {
         try {
-            return java.net.URLEncoder.encode(value, "UTF-8");
+            return java.net.URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (java.io.UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

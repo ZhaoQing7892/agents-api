@@ -4,6 +4,8 @@ import io.openkruise.agents.client.runtime.utils.ConnectStreamReader;
 import okhttp3.Response;
 
 import java.io.Closeable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * WatchHandle represents a handle to a directory event stream being watched.
@@ -11,6 +13,7 @@ import java.io.Closeable;
  * Stops watching and closes the underlying HTTP stream via {@link #stop()}.
  */
 public class WatchHandle {
+    private static final Logger LOG = Logger.getLogger(WatchHandle.class.getName());
     private final Closeable streamReader;
     private final Response streamingResponse;
     private volatile boolean stopped = false;
@@ -28,7 +31,7 @@ public class WatchHandle {
             try {
                 streamReader.close();
             } catch (Exception e) {
-                System.err.println("Error closing stream reader: " + e.getMessage());
+                LOG.log(Level.WARNING, "Error closing watch stream reader", e);
             } finally {
                 if (streamingResponse != null) {
                     try {

@@ -6,12 +6,15 @@ import io.openkruise.agents.client.runtime.envd.filesystem.FilesystemEvent;
 import io.openkruise.agents.client.runtime.envd.filesystem.WatchDirResponse;
 
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Observer for handling WatchDirResponse stream events.
  * Converts protobuf WatchDirResponse to WatchHandle.FilesystemEvent and notifies the consumer.
  */
 public class WatchDirResponseObserver implements StreamObserver<WatchDirResponse> {
+    private static final Logger LOG = Logger.getLogger(WatchDirResponseObserver.class.getName());
     private final Consumer<WatchHandle.FilesystemEvent> onEvent;
 
     public WatchDirResponseObserver(Consumer<WatchHandle.FilesystemEvent> onEvent) {
@@ -39,8 +42,7 @@ public class WatchDirResponseObserver implements StreamObserver<WatchDirResponse
 
     @Override
     public void onError(Throwable t) {
-        System.err.println("Error in WatchDirResponseObserver: " + t.getMessage());
-        t.printStackTrace();
+        LOG.log(Level.WARNING, "Error in WatchDirResponseObserver", t);
     }
 
     @Override
