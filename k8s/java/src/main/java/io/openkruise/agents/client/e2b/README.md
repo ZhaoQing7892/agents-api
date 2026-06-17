@@ -100,6 +100,7 @@ api.kill(id);
 | `sandboxID`          | Sandbox ID                                     |
 | `commands`           | Command execution module (`Commands`)          |
 | `files`              | Filesystem module (`Filesystem`)               |
+| `codeInterpreter`    | Code interpreter module (`CodeInterpreter`)    |
 | `getSandboxURL()`    | Sandbox envd URL                               |
 | `getConfig()`        | Connection config                              |
 | `getRuntimeClient()` | Underlying `RuntimeClient`                     |
@@ -263,7 +264,136 @@ wh.stop();
 
 ---
 
-## 4. SandboxInfo (Immutable)
+## 4. Code Interpreter (CodeInterpreter)
+
+Execute code in the sandbox via `sandbox.codeInterpreter`. Supports Python, JavaScript, TypeScript, R, Java, Bash, and
+more.
+
+### Methods
+
+| Method                                                  | Description                                      |
+|---------------------------------------------------------|--------------------------------------------------|
+| `runCode(String code)`                                  | Execute Python code (default language)           |
+| `runCode(String code, String language)`                 | Execute code in specified language               |
+| `runCode(String code, String language, RunCodeOptions)` | Execute code with options (cwd, env vars, etc.)  |
+| `runCode(RunCodeRequest request)`                       | Execute code (full request object)               |
+| `createCodeContext(String cwd, String language)`        | Create code execution context (set cwd/language) |
+| `removeCodeContext(String contextId)`                   | Remove specified code execution context          |
+| `listCodeContexts()`                                    | List all code execution contexts                 |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // Working directory
+    .setEnvVars(Map.of("DEBUG", "true"))         // Environment variables
+    .setTimeoutMs(30000L)                        // Timeout (milliseconds)
+    .setContextId("context-id");                 // Use specified context (mutually exclusive with language)
+```
+
+### Context (Code Execution Context)
+
+Context maintains an independent code execution environment. Each Context has its own working directory and language
+environment.
+
+| Field      | Type     | Description |
+|------------|----------|-------------|
+| `id`       | `String` | Context ID  |
+| `language` | `String` | Language    |
+| `cwd`      | `String` | Working dir |
+
+**Note**: When using Context, the `language` parameter in `runCode()` is ignored (server requires `context_id` and
+`language` to be mutually exclusive).
+
+### Execution (Execution Result)
+
+| Field            | Type             | Description                                 |
+|------------------|------------------|---------------------------------------------|
+| `results`        | `List<Result>`   | Execution results (text/html/image formats) |
+| `logs`           | `Logs`           | Log output (stdout/stderr)                  |
+| `error`          | `ExecutionError` | Execution error (if any)                    |
+| `executionCount` | `Integer`        | Execution count                             |
+
+### Result (Result Format)
+
+Supports multiple output formats, similar to Jupyter notebook:
+
+| Field        | Type                  | Description    |
+|--------------|-----------------------|----------------|
+| `text`       | `String`              | Plain text     |
+| `html`       | `String`              | HTML output    |
+| `markdown`   | `String`              | Markdown       |
+| `png`        | `String` (base64)     | PNG image      |
+| `jpeg`       | `String` (base64)     | JPEG image     |
+| `svg`        | `String`              | SVG graphic    |
+| `json`       | `Map<String, Object>` | JSON data      |
+| `mainResult` | `boolean`             | Is main result |
+
+### Examples
+
+```java
+// Execute Python code
+Execution result = sandbox.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// Execute JavaScript code
+Execution jsResult = sandbox.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// Execute with options (environment variables)
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = sandbox.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// Use Context to set working directory
+Context ctx = sandbox.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = sandbox.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// Clean up Context
+sandbox.codeInterpreter.removeCodeContext(ctx.getId());
+
+// List all Contexts
+List<Context> contexts = sandbox.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// Get main result text
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// Streaming execution (event-by-event processing)
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+sandbox.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+Full example: [SandboxCodeInterpreterExample.java](../examples/e2b/SandboxCodeInterpreterExample.java)
+
+---
+
+## 5. SandboxInfo (Immutable)
 
 `SandboxInfo` is the return type of `list()` / `getInfo()`, an **immutable object** (all fields `final`, no setters,
 `metadata` and `volumeMounts` are unmodifiable collections).
@@ -293,7 +423,7 @@ wh.stop();
 
 ---
 
-## 5. Connection Configuration (ConnectionConfig)
+## 6. Connection Configuration (ConnectionConfig)
 
 ### Scheme & Protocol
 
@@ -322,6 +452,7 @@ Connection behavior is determined by two orthogonal dimensions: **Scheme** and *
 | `.sandboxBaseURL(String)`       | **Highest priority**: directly overrides sandbox envd base URL |
 | `.requestTimeoutMs(long)`       | HTTP request timeout (ms), default 60000                       |
 | `.port(int)`                    | envd port, default 49983                                       |
+| `.codeInterpreterPort(int)`     | Code interpreter port, default 49999                           |
 | `.debug(boolean)`               | Debug mode; kill/setTimeout skip actual calls                  |
 | `.headers(Map<String, String>)` | Custom request headers                                         |
 | `.addHeader(String, String)`    | Add a single custom header                                     |
@@ -343,7 +474,7 @@ Builder methods:
 
 ---
 
-## 6. K8s Direct Connect Mode
+## 7. K8s Direct Connect Mode
 
 Connect directly to a sandbox in a K8s cluster, bypassing the E2B control plane:
 

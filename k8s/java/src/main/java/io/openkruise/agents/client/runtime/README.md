@@ -20,6 +20,7 @@ runtime/
 ├── filesystem/                   # Filesystem
 │   ├── Filesystem.java           # listDir / read / write / makeDir / remove / watchDir / move
 │   └── WatchHandle.java          # Directory watch handle: stop
+├── codeinterpreter/              # Code interpreter
 ├── utils/                        # Utilities
 │   ├── ConnectStreamReader.java  # Connect Protocol streaming response parser
 │   └── MessageStream.java        # Streaming message interface (hasNext / next / close)
@@ -96,10 +97,13 @@ Full example: [K8sDirectConnectExample.java](../examples/runtime/K8sDirectConnec
 
 ### Fields
 
-| Field      | Type         | Description              |
-|------------|--------------|--------------------------|
-| `commands` | `Commands`   | Command execution module |
-| `files`    | `Filesystem` | Filesystem module        |
+### Fields
+
+| Field             | Type              | Description              |
+|-------------------|-------------------|--------------------------|
+| `commands`        | `Commands`        | Command execution module |
+| `files`           | `Filesystem`      | Filesystem module        |
+| `codeInterpreter` | `CodeInterpreter` | Code interpreter module  |
 
 ### Methods
 
@@ -132,6 +136,9 @@ routing is involved.
 | `.headers(Map<String, String>)` | Merge multiple custom headers                                                      |
 | `.addHeader(String, String)`    | Add a single custom header                                                         |
 | `.requestTimeoutMs(long)`       | HTTP timeout (ms), default 60000                                                   |
+| `.sandboxPort(int)`             | envd port, default 49983 (for `e2b-sandbox-port` header)                           |
+| `.codeInterpreterPort(int)`     | Code interpreter port, default 49999                                               |
+| `.urlBuilder(URLBuilder)`       | URL builder, supports E2B and Runtime modes                                        |
 
 ### Priority
 
@@ -295,7 +302,135 @@ wh.stop();
 
 ---
 
-## 5. Exception Hierarchy
+## 5. Code Interpreter (CodeInterpreter)
+
+Execute code in the sandbox via `client.codeInterpreter`. Supports Python, JavaScript, TypeScript, R, Java, Bash, and
+more.
+
+### Methods
+
+| Method                                                       | Description                                               |
+|--------------------------------------------------------------|-----------------------------------------------------------|
+| `runCode(String code)`                                       | Execute Python code (default language)                    |
+| `runCode(String code, String language)`                      | Execute code in specified language                        |
+| `runCode(String code, String language, RunCodeOptions)`      | Execute code with options (cwd, env vars, etc.)           |
+| `runCode(RunCodeRequest request)`                            | Execute code (full request object)                        |
+| `runCodeStreaming(RunCodeRequest, Consumer<ExecutionEvent>)` | Streaming execution, event-by-event callback (low memory) |
+| `createCodeContext(String cwd, String language)`             | Create code execution context (set cwd/language)          |
+| `removeCodeContext(String contextId)`                        | Remove specified code execution context                   |
+| `listCodeContexts()`                                         | List all code execution contexts                          |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // Working directory
+    .setEnvVars(Map.of("DEBUG", "true"))         // Environment variables
+    .setTimeoutMs(30000L)                        // Timeout (milliseconds)
+    .setContextId("context-id");                 // Use specified context (mutually exclusive with language)
+```
+
+### Context (Code Execution Context)
+
+Context maintains an independent code execution environment. Each Context has its own working directory and language
+environment.
+
+| Field      | Type     | Description |
+|------------|----------|-------------|
+| `id`       | `String` | Context ID  |
+| `language` | `String` | Language    |
+| `cwd`      | `String` | Working dir |
+
+**Note**: When using Context, the `language` parameter in `runCode()` is ignored (server requires `context_id` and
+`language` to be mutually exclusive).
+
+### Execution (Execution Result)
+
+| Field            | Type             | Description                                 |
+|------------------|------------------|---------------------------------------------|
+| `results`        | `List<Result>`   | Execution results (text/html/image formats) |
+| `logs`           | `Logs`           | Log output (stdout/stderr)                  |
+| `error`          | `ExecutionError` | Execution error (if any)                    |
+| `executionCount` | `Integer`        | Execution count                             |
+
+### Result (Result Format)
+
+Supports multiple output formats, similar to Jupyter notebook:
+
+| Field        | Type                  | Description    |
+|--------------|-----------------------|----------------|
+| `text`       | `String`              | Plain text     |
+| `html`       | `String`              | HTML output    |
+| `markdown`   | `String`              | Markdown       |
+| `png`        | `String` (base64)     | PNG image      |
+| `jpeg`       | `String` (base64)     | JPEG image     |
+| `svg`        | `String`              | SVG graphic    |
+| `json`       | `Map<String, Object>` | JSON data      |
+| `mainResult` | `boolean`             | Is main result |
+
+### Examples
+
+```java
+// Execute Python code
+Execution result = client.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// Execute JavaScript code
+Execution jsResult = client.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// Execute with options (environment variables)
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = client.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// Use Context to set working directory
+Context ctx = client.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = client.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// Clean up Context
+client.codeInterpreter.removeCodeContext(ctx.getId());
+
+// List all Contexts
+List<Context> contexts = client.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// Get main result text
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// Streaming execution (event-by-event processing)
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+client.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+---
+
+## 6. Exception Hierarchy
 
 | Exception Class         | Description                                                                    |
 |-------------------------|--------------------------------------------------------------------------------|
@@ -304,7 +439,7 @@ wh.stop();
 
 ---
 
-## 6. Resource Management
+## 7. Resource Management
 
 `RuntimeClient` implements `AutoCloseable`; `close()` releases:
 

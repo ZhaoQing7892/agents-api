@@ -1,5 +1,7 @@
 package io.openkruise.agents.client.runtime;
 
+import io.openkruise.agents.client.runtime.RuntimeConfig.Builder;
+import io.openkruise.agents.client.runtime.codeinterpreter.CodeInterpreter;
 import io.openkruise.agents.client.runtime.commands.Commands;
 import io.openkruise.agents.client.runtime.exceptions.K8sOperationException;
 import io.openkruise.agents.client.runtime.filesystem.Filesystem;
@@ -14,6 +16,7 @@ import java.util.Objects;
 public class RuntimeClient implements AutoCloseable {
     public final Commands commands;
     public final Filesystem files;
+    public final CodeInterpreter codeInterpreter;
 
     private final String sandboxID;
     private final RuntimeConfig config;
@@ -27,6 +30,7 @@ public class RuntimeClient implements AutoCloseable {
 
         this.commands = new Commands(sandboxID, config, httpClient, streamingClient);
         this.files = new Filesystem(sandboxID, config, httpClient, streamingClient);
+        this.codeInterpreter = new CodeInterpreter(sandboxID, config);
     }
 
     public static RuntimeClient create(String sandboxID, RuntimeConfig config) {
@@ -46,7 +50,7 @@ public class RuntimeClient implements AutoCloseable {
 
         // Rebuild config if runtimeToken is obtained
         if (runtimeToken != null && !runtimeToken.isEmpty()) {
-            config = new RuntimeConfig.Builder()
+            config = new Builder()
                 .domain(config.getDomain())
                 .scheme(config.getScheme())
                 .runtimeUrl(config.getRuntimeUrl())
@@ -55,6 +59,9 @@ public class RuntimeClient implements AutoCloseable {
                 .headers(config.getHeaders())
                 .requestTimeoutMs(config.getRequestTimeoutMs())
                 .runtimeToken(runtimeToken)
+                .urlBuilder(config.getUrlBuilder())
+                .sandboxPort(config.getSandboxPort())
+                .codeInterpreterPort(config.getCodeInterpreterPort())
                 .build();
         }
 
