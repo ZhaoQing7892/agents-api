@@ -1,7 +1,6 @@
 package io.openkruise.agents.client.examples.e2b;
 
 import io.openkruise.agents.client.e2b.ConnectionConfig;
-import io.openkruise.agents.client.e2b.ConnectionConfig.Protocol;
 import io.openkruise.agents.client.e2b.Sandbox;
 import io.openkruise.agents.client.e2b.SandboxApi;
 import io.openkruise.agents.client.runtime.codeinterpreter.CodeInterpreter;
@@ -11,6 +10,7 @@ import io.openkruise.agents.client.runtime.codeinterpreter.RunCodeLanguage;
 import io.openkruise.agents.client.runtime.codeinterpreter.RunCodeOptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,8 +28,6 @@ public class SandboxCodeInterpreterExample {
         ConnectionConfig config = new ConnectionConfig.Builder()
             .apiKey(API_KEY)
             .domain(SANDBOX_DOMAIN)
-            .scheme("http")
-            .protocol(Protocol.PRIVATE)
             .build();
 
         SandboxApi api = new SandboxApi(config);
@@ -87,6 +85,13 @@ public class SandboxCodeInterpreterExample {
             System.out.println("\n--- Context API Example ---");
             Context ctx = interpreter.createCodeContext("/tmp", RunCodeLanguage.PYTHON.getValue());
             System.out.printf("✓ Context created: %s%n", ctx);
+            
+            // List all contexts
+            List<Context> contexts = interpreter.listCodeContexts();
+            System.out.printf("✓ Active contexts: %d%n", contexts.size());
+            for (Context c : contexts) {
+                System.out.printf("  - %s%n", c);
+            }
             
             RunCodeOptions ctxOpts = new RunCodeOptions()
                 .setContextId(ctx.getId())
