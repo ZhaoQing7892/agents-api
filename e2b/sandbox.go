@@ -104,7 +104,7 @@ func Create(ctx context.Context, template string, opts ...SandboxOption) (*Sandb
 		return nil, fmt.Errorf("failed to create sandbox: %w", err)
 	}
 
-	sb := newSandbox(config, api, resp.SandboxID, resp.TemplateID, resp.EnvdVersion)
+	sb := newSandbox(config, api, resp.SandboxID, resp.EnvdAccessToken, resp.TemplateID, resp.EnvdVersion)
 	return sb, nil
 }
 
@@ -125,7 +125,7 @@ func Connect(ctx context.Context, sandboxID string, opts ...SandboxOption) (*San
 		return nil, fmt.Errorf("failed to connect to sandbox: %w", err)
 	}
 
-	sb := newSandbox(config, api, resp.GetSandboxID(), resp.GetTemplateID(), resp.GetEnvdVersion())
+	sb := newSandbox(config, api, resp.GetSandboxID(), resp.GetEnvdAccessToken(), resp.GetTemplateID(), resp.GetEnvdVersion())
 	return sb, nil
 }
 
@@ -139,7 +139,8 @@ func applySandboxOptions(opts []SandboxOption) *sandboxOptions {
 }
 
 // newSandbox initializes a Sandbox with an envd client and management API.
-func newSandbox(config *ConnectionConfig, api *SandboxApi, sandboxID, templateID, envdVersion string) *Sandbox {
+func newSandbox(config *ConnectionConfig, api *SandboxApi, sandboxID, EnvdAccessToken, templateID, envdVersion string) *Sandbox {
+	config.AccessToken = EnvdAccessToken
 	client := runtime.NewWithConfig(sandboxID, config.toEnvdConfig(sandboxID))
 
 	return &Sandbox{
