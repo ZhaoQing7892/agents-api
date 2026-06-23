@@ -199,6 +199,7 @@ func (c *ConnectionConfig) toEnvdConfig(sandboxID string) *runtime.Config {
 		RuntimePort:    c.RuntimePort,
 		APIKey:         c.APIKey,
 		RequestTimeout: c.RequestTimeout,
+		RuntimeToken:   c.AccessToken,
 	}
 
 	// Pre-compute the full sandbox URL using the Protocol-aware logic so
