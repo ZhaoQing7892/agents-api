@@ -10,10 +10,8 @@
 ```java
 import io.openkruise.agents.client.e2b.*;
 
-ConnectionConfig config = new ConnectionConfig.Builder()
-    .apiKey("your-api-key")
-    .domain("your.domain.com")
-    .build();
+// Reads E2B_API_KEY and E2B_DOMAIN from environment variables
+ConnectionConfig config = new ConnectionConfig.Builder().build();
 
 SandboxApi api = new SandboxApi(config);
 
@@ -25,6 +23,12 @@ try (sandbox) {
 } finally {
     api.kill(sandbox.getSandboxID());  // Explicitly kill sandbox
 }
+```
+
+**Environment Variables Setup**:
+```bash
+export E2B_API_KEY="your-api-key"
+export E2B_DOMAIN="your.domain.com"
 ```
 
 Full
@@ -39,10 +43,8 @@ examples: [Lifecycle Management](../examples/e2b/SandboxApiManagerExample.java) 
 ### Initialization
 
 ```java
-ConnectionConfig config = new ConnectionConfig.Builder()
-    .apiKey("your-api-key")
-    .domain("your.domain.com")
-    .build();
+// Reads E2B_API_KEY and E2B_DOMAIN from environment variables
+ConnectionConfig config = new ConnectionConfig.Builder().build();
 
 SandboxApi api = new SandboxApi(config);
 ```

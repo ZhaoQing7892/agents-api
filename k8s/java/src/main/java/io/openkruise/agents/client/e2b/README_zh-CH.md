@@ -9,10 +9,8 @@
 ```java
 import io.openkruise.agents.client.e2b.*;
 
-ConnectionConfig config = new ConnectionConfig.Builder()
-    .apiKey("your-api-key")
-    .domain("your.domain.com")
-    .build();
+// 从环境变量读取 E2B_API_KEY 和 E2B_DOMAIN
+ConnectionConfig config = new ConnectionConfig.Builder().build();
 
 SandboxApi api = new SandboxApi(config);
 
@@ -26,6 +24,12 @@ try (sandbox) {
 }
 ```
 
+**环境变量设置**：
+```bash
+export E2B_API_KEY="your-api-key"
+export E2B_DOMAIN="your.domain.com"
+```
+
 完整示例：[生命周期管理](../examples/e2b/SandboxApiManagerExample.java) | [命令操作](../examples/e2b/SandboxCommandsExample.java) | [文件操作](../examples/e2b/SandboxFilesExample.java)
 
 ---
@@ -37,10 +41,8 @@ try (sandbox) {
 ### 初始化
 
 ```java
-ConnectionConfig config = new ConnectionConfig.Builder()
-    .apiKey("your-api-key")
-    .domain("your.domain.com")
-    .build();
+// 从环境变量读取 E2B_API_KEY 和 E2B_DOMAIN
+ConnectionConfig config = new ConnectionConfig.Builder().build();
 
 SandboxApi api = new SandboxApi(config);
 ```
