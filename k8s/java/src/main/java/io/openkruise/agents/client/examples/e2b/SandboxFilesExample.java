@@ -13,18 +13,14 @@ import io.openkruise.agents.client.runtime.filesystem.Filesystem.WriteInfo;
  * E2B mode Files complete usage example
  */
 public class SandboxFilesExample {
-    private static final String API_KEY = "your-api-key";
-    private static final String SANDBOX_DOMAIN = "your.domain.com";
     private static final String TEMPLATE = "code-interpreter";
 
     public static void main(String[] args) {
         System.out.println("========== E2B Sandbox Files Java SDK Example ==========");
 
         // ========== 1. Connection configuration ==========
-        ConnectionConfig config = new ConnectionConfig.Builder()
-            .apiKey(API_KEY)
-            .domain(SANDBOX_DOMAIN)
-            .build();
+        // Reads E2B_API_KEY and E2B_DOMAIN from environment variables as defaults
+        ConnectionConfig config = new ConnectionConfig.Builder().build();
 
         SandboxApi api = new SandboxApi(config);
         String sandboxId = null;

@@ -1,6 +1,8 @@
 package io.openkruise.agents.client.e2b;
 
+import io.openkruise.agents.client.runtime.codeinterpreter.CodeInterpreter;
 import io.openkruise.agents.client.runtime.RuntimeClient;
+import io.openkruise.agents.client.runtime.RuntimeConfig;
 import io.openkruise.agents.client.runtime.commands.Commands;
 import io.openkruise.agents.client.runtime.filesystem.Filesystem;
 
@@ -15,6 +17,8 @@ public class Sandbox implements AutoCloseable {
     public final Commands commands;
     /** File operations within the sandbox */
     public final Filesystem files;
+    /** Code interpreter for executing code in the sandbox */
+    public final CodeInterpreter codeInterpreter;
 
     private final String sandboxID;
     private final ConnectionConfig config;
@@ -24,10 +28,11 @@ public class Sandbox implements AutoCloseable {
         this.sandboxID = sandboxID;
         this.config = config;
 
-        E2bRuntimeConfig runtimeConfig = E2bRuntimeConfig.fromConnectionConfig(config, envdAccessToken);
+        RuntimeConfig runtimeConfig = ConnectionConfig.toRuntimeConfig(config, envdAccessToken);
         this.runtimeClient = RuntimeClient.create(sandboxID, runtimeConfig);
         this.commands = runtimeClient.commands;
         this.files = runtimeClient.files;
+        this.codeInterpreter = runtimeClient.codeInterpreter;
     }
 
     public String getSandboxID() {

@@ -2,6 +2,9 @@ package io.openkruise.agents.client.e2b;
 
 import io.openkruise.agents.client.e2b.api.SandboxesApi;
 import io.openkruise.agents.client.e2b.api.invoker.ApiClient;
+import io.openkruise.agents.client.runtime.RuntimeConfig;
+import io.openkruise.agents.client.url.E2BURLBuilder;
+import io.openkruise.agents.client.url.URLBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +33,6 @@ public class ConnectionConfig {
     private static final String DEFAULT_SCHEME = "https";
     private static final long DEFAULT_REQUEST_TIMEOUT_MS = 60_000L;
     static final int DEFAULT_SANDBOX_TIMEOUT = 300;
-    static final int DEFAULT_RUNTIME_PORT = 49983;
 
     private String apiKey;
     private String accessToken;
@@ -42,19 +44,24 @@ public class ConnectionConfig {
     private boolean debug;
     private long requestTimeoutMs;
     private int port;
+    private int codeInterpreterPort;
     private Map<String, String> headers;
 
     private volatile ApiClient apiClient;
     private volatile SandboxesApi sandboxesApi;
     private final Object lock = new Object();
+    
+    private URLBuilder urlBuilder;
 
     private ConnectionConfig() {
         this.domain = DEFAULT_DOMAIN;
         this.scheme = DEFAULT_SCHEME;
         this.protocol = Protocol.NATIVE;
         this.requestTimeoutMs = DEFAULT_REQUEST_TIMEOUT_MS;
-        this.port = DEFAULT_RUNTIME_PORT;
+        this.port = RuntimeConfig.DEFAULT_RUNTIME_PORT;
+        this.codeInterpreterPort = RuntimeConfig.DEFAULT_CODE_INTERPRETER_PORT;
         this.headers = new HashMap<>();
+        this.urlBuilder = buildURLBuilder();
     }
 
     private ConnectionConfig(ConnectionConfig config) {
@@ -68,35 +75,82 @@ public class ConnectionConfig {
         this.debug = config.debug;
         this.requestTimeoutMs = config.requestTimeoutMs;
         this.port = config.port;
+        this.codeInterpreterPort = config.codeInterpreterPort;
         this.headers = new HashMap<>(config.headers);
+        this.urlBuilder = buildURLBuilder();
+    }
+    
+    private URLBuilder buildURLBuilder() {
+        return new E2BURLBuilder.Builder()
+            .scheme(scheme)
+            .domain(domain)
+            .protocol(protocol)
+            .runtimePort(port)
+            .codeInterpreterPort(codeInterpreterPort)
+            .customApiURL(apiURL)
+            .customSandboxBaseURL(sandboxBaseURL)
+            .build();
     }
 
     public static ConnectionConfig create() {
         return new Builder().build();
     }
 
+    /**
+     * Convert ConnectionConfig to RuntimeConfig for data plane operations.
+     */
+    public static RuntimeConfig toRuntimeConfig(ConnectionConfig connectionConfig, String envdAccessToken) {
+        if (connectionConfig == null) {
+            throw new IllegalArgumentException("connectionConfig cannot be null");
+        }
+        
+        RuntimeConfig.Builder builder = new RuntimeConfig.Builder();
+        builder.domain(connectionConfig.getDomain());
+        builder.scheme(connectionConfig.getScheme());
+        builder.requestTimeoutMs(connectionConfig.getRequestTimeoutMs());
+
+        if (connectionConfig.getApiKey() != null) {
+            builder.apiKey(connectionConfig.getApiKey());
+        }
+        if (connectionConfig.getHeaders() != null) {
+            builder.headers(connectionConfig.getHeaders());
+        }
+        if (envdAccessToken != null && !envdAccessToken.isEmpty()) {
+            builder.runtimeToken(envdAccessToken);
+        }
+
+        builder.sandboxPort(connectionConfig.getPort());
+        builder.codeInterpreterPort(connectionConfig.getCodeInterpreterPort());
+
+        // Build URLBuilder for E2B
+        URLBuilder urlBuilder = new E2BURLBuilder.Builder()
+            .scheme(connectionConfig.getScheme())
+            .domain(connectionConfig.getDomain())
+            .protocol(connectionConfig.getProtocol())
+            .runtimePort(connectionConfig.getPort())
+            .codeInterpreterPort(connectionConfig.getCodeInterpreterPort())
+            .customApiURL(connectionConfig.getApiURL())
+            .customSandboxBaseURL(connectionConfig.getSandboxBaseURL())
+            .build();
+
+        builder.urlBuilder(urlBuilder);
+
+        return builder.build();
+    }
+
     /** API base URL, automatically selects NATIVE/PRIVATE format based on protocol. */
     public String getAPIURL() {
-        if (apiURL != null && !apiURL.isEmpty()) {
-            return apiURL;
-        }
-        String s = getSchemeOrDefault();
-        if (protocol == Protocol.PRIVATE) {
-            return String.format("%s://%s/kruise/api", s, domain);
-        }
-        return String.format("%s://api.%s", s, domain);
+        return urlBuilder.buildAPIURL();
     }
 
     /** Envd URL for a specific sandbox, automatically selects NATIVE/PRIVATE format based on protocol. */
     public String getSandboxURL(String sandboxID) {
-        if (sandboxBaseURL != null && !sandboxBaseURL.isEmpty()) {
-            return sandboxBaseURL;
-        }
-        String s = getSchemeOrDefault();
-        if (protocol == Protocol.PRIVATE) {
-            return String.format("%s://%s/kruise/%s/%d", s, domain, sandboxID, port);
-        }
-        return String.format("%s://%d-%s.%s", s, port, sandboxID, domain);
+        return urlBuilder.buildSandboxURL(sandboxID);
+    }
+
+    /** Code Interpreter URL for a specific sandbox, uses codeInterpreterPort (49999). */
+    public String getCodeInterpreterURL(String sandboxID) {
+        return urlBuilder.buildCodeInterpreterURL(sandboxID);
     }
 
     /** Shared ApiClient with double-checked locking lazy initialization. */
@@ -155,6 +209,8 @@ public class ConnectionConfig {
     public long getRequestTimeoutMs() {return requestTimeoutMs;}
 
     public int getPort() {return port;}
+
+    public int getCodeInterpreterPort() {return codeInterpreterPort;}
 
     public Map<String, String> getHeaders() {return headers;}
 
@@ -223,6 +279,11 @@ public class ConnectionConfig {
             return this;
         }
 
+        public Builder codeInterpreterPort(int codeInterpreterPort) {
+            config.codeInterpreterPort = codeInterpreterPort;
+            return this;
+        }
+
         public Builder headers(Map<String, String> headers) {
             config.headers.putAll(headers);
             return this;
@@ -234,6 +295,7 @@ public class ConnectionConfig {
         }
 
         public ConnectionConfig build() {
+            config.urlBuilder = config.buildURLBuilder();
             return new ConnectionConfig(config);
         }
     }

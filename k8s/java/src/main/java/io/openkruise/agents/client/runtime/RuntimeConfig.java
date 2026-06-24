@@ -3,6 +3,7 @@ package io.openkruise.agents.client.runtime;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
+import io.openkruise.agents.client.url.URLBuilder;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,7 +15,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Runtime direct connection configuration with Builder pattern. Use subclass {@code E2bRuntimeConfig} for E2B mode.
+ * Runtime connection configuration with Builder pattern.
+ * Supports both direct runtime connection and E2B mode (via URLBuilder).
  */
 public class RuntimeConfig {
 
@@ -22,6 +24,8 @@ public class RuntimeConfig {
     private static final String DEFAULT_SCHEME = "http";
     private static final long DEFAULT_REQUEST_TIMEOUT_MS = 60_000L;
     static final String DEFAULT_AUTH_HEADER = "Basic cm9vdDo=";
+    public static final int DEFAULT_RUNTIME_PORT = 49983;
+    public static final int DEFAULT_CODE_INTERPRETER_PORT = 49999;
 
     private final String domain;
     private final String scheme;
@@ -31,6 +35,9 @@ public class RuntimeConfig {
     private final String apiKey;
     private final Map<String, String> headers;
     private final long requestTimeoutMs;
+    private final URLBuilder urlBuilder;
+    private final int sandboxPort;
+    private final int codeInterpreterPort;
 
     protected RuntimeConfig(Builder builder) {
         this.domain = builder.domain;
@@ -41,12 +48,18 @@ public class RuntimeConfig {
         this.apiKey = builder.apiKey;
         this.headers = Collections.unmodifiableMap(new HashMap<>(builder.headers));
         this.requestTimeoutMs = builder.requestTimeoutMs;
+        this.urlBuilder = builder.urlBuilder;
+        this.sandboxPort = builder.sandboxPort;
+        this.codeInterpreterPort = builder.codeInterpreterPort;
     }
 
     /**
-     * Runtime base URL, overridable by subclasses. Returns runtimeUrl if set, otherwise combines scheme+domain.
+     * Runtime base URL, uses URLBuilder if available, otherwise returns runtimeUrl or scheme://domain.
      */
     public String getSandboxURL(String sandboxID) {
+        if (urlBuilder != null) {
+            return urlBuilder.buildSandboxURL(sandboxID);
+        }
         if (runtimeUrl != null && !runtimeUrl.isEmpty()) {
             return runtimeUrl;
         }
@@ -55,7 +68,18 @@ public class RuntimeConfig {
     }
 
     /**
-     * Builds common authentication headers (Authorization, X-Access-Token, X-API-Key, e2b-sandbox-id, etc.), extensible by subclasses.
+     * Code Interpreter URL for a specific sandbox, uses codeInterpreterPort (49999).
+     */
+    public String getCodeInterpreterURL(String sandboxID) {
+        if (urlBuilder != null) {
+            return urlBuilder.buildCodeInterpreterURL(sandboxID);
+        }
+        // Fallback: use same base URL as sandbox
+        return getSandboxURL(sandboxID);
+    }
+
+    /**
+     * Builds common authentication headers (Authorization, X-Access-Token, X-API-Key, e2b-sandbox-id, e2b-sandbox-port, etc.), extensible by subclasses.
      */
     public Map<String, String> getSandboxHeaders(String sandboxID) {
         Map<String, String> result = new HashMap<>(5 + headers.size());
@@ -75,7 +99,23 @@ public class RuntimeConfig {
             result.put("e2b-sandbox-id", sandboxID);
         }
 
+        if (sandboxPort > 0) {
+            result.put("e2b-sandbox-port", String.valueOf(sandboxPort));
+        }
+
         result.putAll(headers);
+        return result;
+    }
+
+    /**
+     * Get headers for code interpreter operations.
+     * Overrides e2b-sandbox-port with codeInterpreterPort.
+     */
+    public Map<String, String> getCodeInterpreterHeaders(String sandboxID) {
+        Map<String, String> result = new HashMap<>(getSandboxHeaders(sandboxID));
+        if (codeInterpreterPort > 0) {
+            result.put("e2b-sandbox-port", String.valueOf(codeInterpreterPort));
+        }
         return result;
     }
 
@@ -237,6 +277,18 @@ public class RuntimeConfig {
         return requestTimeoutMs;
     }
 
+    public int getSandboxPort() {
+        return sandboxPort;
+    }
+
+    public int getCodeInterpreterPort() {
+        return codeInterpreterPort;
+    }
+
+    public URLBuilder getUrlBuilder() {
+        return urlBuilder;
+    }
+
     /**
      * Builder pattern, extensible by subclasses.
      */
@@ -249,6 +301,9 @@ public class RuntimeConfig {
         protected String apiKey;
         protected Map<String, String> headers = new HashMap<>();
         protected long requestTimeoutMs = DEFAULT_REQUEST_TIMEOUT_MS;
+        protected URLBuilder urlBuilder;
+        protected int sandboxPort = DEFAULT_RUNTIME_PORT;
+        protected int codeInterpreterPort = DEFAULT_CODE_INTERPRETER_PORT;
 
         public Builder() {}
 
@@ -297,6 +352,21 @@ public class RuntimeConfig {
 
         public Builder requestTimeoutMs(long requestTimeoutMs) {
             this.requestTimeoutMs = requestTimeoutMs;
+            return this;
+        }
+
+        public Builder urlBuilder(URLBuilder urlBuilder) {
+            this.urlBuilder = urlBuilder;
+            return this;
+        }
+
+        public Builder sandboxPort(int sandboxPort) {
+            this.sandboxPort = sandboxPort;
+            return this;
+        }
+
+        public Builder codeInterpreterPort(int codeInterpreterPort) {
+            this.codeInterpreterPort = codeInterpreterPort;
             return this;
         }
 
