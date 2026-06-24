@@ -97,8 +97,6 @@ Full example: [K8sDirectConnectExample.java](../examples/runtime/K8sDirectConnec
 
 ### Fields
 
-### Fields
-
 | Field             | Type              | Description              |
 |-------------------|-------------------|--------------------------|
 | `commands`        | `Commands`        | Command execution module |
