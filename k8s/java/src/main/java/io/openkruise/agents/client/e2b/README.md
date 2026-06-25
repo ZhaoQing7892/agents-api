@@ -498,11 +498,10 @@ ProxyConfig proxyConfig = new ProxyConfig.Builder()
     .proxy("proxy.example.com", 8080)
     .build();
 
-// 2. Enable proxy in ConnectionConfig
+// 2. Set proxy in ConnectionConfig
 ConnectionConfig config = new ConnectionConfig.Builder()
     .apiKey("your-api-key")
     .domain("your.domain.com")
-    .proxyEnabled(true)
     .proxyConfig(proxyConfig)
     .build();
 
@@ -548,18 +547,16 @@ ProxyConfig proxyConfig = new ProxyConfig.Builder()
     .hostnameVerifier((hostname, session) -> true)
     .build();
 
-// 4. Enable in ConnectionConfig
+// 4. Set in ConnectionConfig
 ConnectionConfig config = new ConnectionConfig.Builder()
     .apiKey("your-api-key")
     .domain("your.domain.com")
-    .proxyEnabled(true)
     .proxyConfig(proxyConfig)
     .build();
 ```
 
-> **Note**: When enabling proxy, `proxyEnabled(true)` must be set together with `proxyConfig(...)`, otherwise `build()`
-> will throw `IllegalStateException`. Proxy configuration applies to both control plane (API calls) and data plane (
-> Runtime connections).
+> **Note**: Setting `proxyConfig(...)` automatically enables proxy. Proxy configuration applies to both control plane (
+> API calls) and data plane (Runtime connections).
 
 ---
 

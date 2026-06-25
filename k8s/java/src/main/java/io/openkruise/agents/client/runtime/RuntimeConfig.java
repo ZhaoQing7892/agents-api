@@ -39,7 +39,6 @@ public class RuntimeConfig {
     private final URLBuilder urlBuilder;
     private final int sandboxPort;
     private final int codeInterpreterPort;
-    private final boolean proxyEnabled;
     private final ProxyConfig proxyConfig;
 
     protected RuntimeConfig(Builder builder) {
@@ -54,7 +53,6 @@ public class RuntimeConfig {
         this.urlBuilder = builder.urlBuilder;
         this.sandboxPort = builder.sandboxPort;
         this.codeInterpreterPort = builder.codeInterpreterPort;
-        this.proxyEnabled = builder.proxyEnabled;
         this.proxyConfig = builder.proxyConfig;
     }
 
@@ -149,7 +147,7 @@ public class RuntimeConfig {
                         .writeTimeout(requestTimeoutMs, TimeUnit.MILLISECONDS);
                     
                     // Apply proxy configuration if enabled
-                    if (proxyEnabled && proxyConfig != null) {
+                    if (proxyConfig != null) {
                         proxyConfig.applyTo(builder);
                     }
                     
@@ -176,7 +174,7 @@ public class RuntimeConfig {
                         .writeTimeout(requestTimeoutMs, TimeUnit.MILLISECONDS);
                     
                     // Apply proxy configuration if enabled
-                    if (proxyEnabled && proxyConfig != null) {
+                    if (proxyConfig != null) {
                         proxyConfig.applyTo(builder);
                     }
                     
@@ -306,10 +304,6 @@ public class RuntimeConfig {
         return urlBuilder;
     }
 
-    public boolean isProxyEnabled() {
-        return proxyEnabled;
-    }
-
     public ProxyConfig getProxyConfig() {
         return proxyConfig;
     }
@@ -329,7 +323,6 @@ public class RuntimeConfig {
         protected URLBuilder urlBuilder;
         protected int sandboxPort = DEFAULT_RUNTIME_PORT;
         protected int codeInterpreterPort = DEFAULT_CODE_INTERPRETER_PORT;
-        protected boolean proxyEnabled;
         protected ProxyConfig proxyConfig;
 
         public Builder() {}
@@ -394,11 +387,6 @@ public class RuntimeConfig {
 
         public Builder codeInterpreterPort(int codeInterpreterPort) {
             this.codeInterpreterPort = codeInterpreterPort;
-            return this;
-        }
-
-        public Builder proxyEnabled(boolean proxyEnabled) {
-            this.proxyEnabled = proxyEnabled;
             return this;
         }
 

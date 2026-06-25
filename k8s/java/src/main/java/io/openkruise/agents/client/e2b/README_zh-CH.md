@@ -488,11 +488,10 @@ ProxyConfig proxyConfig = new ProxyConfig.Builder()
     .proxy("proxy.example.com", 8080)
     .build();
 
-// 2. 在 ConnectionConfig 中启用代理
+// 2. 在 ConnectionConfig 中设置代理
 ConnectionConfig config = new ConnectionConfig.Builder()
     .apiKey("your-api-key")
     .domain("your.domain.com")
-    .proxyEnabled(true)
     .proxyConfig(proxyConfig)
     .build();
 
@@ -538,17 +537,15 @@ ProxyConfig proxyConfig = new ProxyConfig.Builder()
     .hostnameVerifier((hostname, session) -> true)
     .build();
 
-// 4. 在 ConnectionConfig 中启用
+// 4. 在 ConnectionConfig 中设置
 ConnectionConfig config = new ConnectionConfig.Builder()
     .apiKey("your-api-key")
     .domain("your.domain.com")
-    .proxyEnabled(true)
     .proxyConfig(proxyConfig)
     .build();
 ```
 
-> **注意**：启用代理时 `proxyEnabled(true)` 必须与 `proxyConfig(...)` 同时设置，否则 `build()` 会抛出
-`IllegalStateException`。代理配置会同时应用于控制面（API 调用）和数据面（Runtime 连接）。
+> **注意**：设置 `proxyConfig(...)` 即自动启用代理。代理配置会同时应用于控制面（API 调用）和数据面（Runtime 连接）。
 
 ---
 

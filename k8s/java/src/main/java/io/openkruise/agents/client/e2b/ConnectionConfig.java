@@ -46,7 +46,6 @@ public class ConnectionConfig {
     private int port;
     private int codeInterpreterPort;
     private Map<String, String> headers;
-    private boolean proxyEnabled;
     private ProxyConfig proxyConfig;
 
     private volatile ApiClient apiClient;
@@ -79,7 +78,6 @@ public class ConnectionConfig {
         this.port = config.port;
         this.codeInterpreterPort = config.codeInterpreterPort;
         this.headers = new HashMap<>(config.headers);
-        this.proxyEnabled = config.proxyEnabled;
         this.proxyConfig = config.proxyConfig;
         this.urlBuilder = buildURLBuilder();
     }
@@ -140,7 +138,6 @@ public class ConnectionConfig {
         builder.urlBuilder(urlBuilder);
         
         // Pass proxy configuration
-        builder.proxyEnabled(connectionConfig.isProxyEnabled());
         builder.proxyConfig(connectionConfig.getProxyConfig());
 
         return builder.build();
@@ -168,7 +165,7 @@ public class ConnectionConfig {
                 if (apiClient == null) {
                     ApiClient client = new ApiClient();
                     // Apply proxy configuration if enabled
-                    if (proxyEnabled && proxyConfig != null) {
+                    if (proxyConfig != null) {
                         client.setHttpClient(proxyConfig.createHttpClient());
                     }
                     client.setBasePath(getAPIURL());
@@ -225,8 +222,6 @@ public class ConnectionConfig {
     public int getCodeInterpreterPort() {return codeInterpreterPort;}
 
     public Map<String, String> getHeaders() {return headers;}
-
-    public boolean isProxyEnabled() {return proxyEnabled;}
 
     public ProxyConfig getProxyConfig() {return proxyConfig;}
 
@@ -310,20 +305,12 @@ public class ConnectionConfig {
             return this;
         }
 
-        public Builder proxyEnabled(boolean proxyEnabled) {
-            config.proxyEnabled = proxyEnabled;
-            return this;
-        }
-
         public Builder proxyConfig(ProxyConfig proxyConfig) {
             config.proxyConfig = proxyConfig;
             return this;
         }
 
         public ConnectionConfig build() {
-            if (config.proxyEnabled && config.proxyConfig == null) {
-                throw new IllegalStateException("proxyConfig must be set when proxyEnabled is true");
-            }
             config.urlBuilder = config.buildURLBuilder();
             return new ConnectionConfig(config);
         }
